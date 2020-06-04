@@ -1,0 +1,71 @@
+{
+  "name": "vue-opti-select-light",
+  "version": "0.1.0",
+  "description": "VueJS Optimized Select",
+  "author": "Fabio Papajani <fabiopapajani1991@gmail.com>",
+  "scripts": {
+    "serve": "vue-cli-service serve dev/main.js",
+    "build": "vue-cli-service build",
+    "build-bundle": "vue-cli-service build --target lib --name vue-opti-select-light ./src/index.js",
+    "lint": "vue-cli-service lint --fix"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "select",
+    "multiselect",
+    "vue-opti-select"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fabio007/vue-opti-select-light.git"
+  },
+  "dependencies": {
+    "vue": "^2.6.11",
+    "core-js": "^3.6.4"
+  },
+  "files": [
+    "dist/*",
+    "src/*",
+    "*.json",
+    "*.js"
+  ],
+  "main": "./dist/vue-opti-select-light.common.js",
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-eslint": "~4.3.0",
+    "@vue/cli-service": "~4.3.0",
+    "babel-eslint": "^10.1.0",
+    "bootstrap": "^4.4.1",
+    "bootstrap-vue": "^2.14.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "bugs": {
+    "url": "https://github.com/Fabio007/vue-opti-select-light/issues"
+  },
+  "homepage": "https://github.com/Fabio007/vue-opti-select-light#readme",
+  "license": "MIT"
+}
