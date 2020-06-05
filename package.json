@@ -4,7 +4,7 @@
   "description": "VueJS Optimized Select",
   "author": "Fabio Papajani <fabiopapajani1991@gmail.com>",
   "scripts": {
-    "serve": "vue-cli-service serve dev/main.js",
+    "serve": "vue-cli-service serve dev/main.js --port 8085",
     "build": "vue-cli-service build",
     "build-bundle": "vue-cli-service build --target lib --name vue-opti-select-light ./src/index.js",
     "lint": "vue-cli-service lint --fix"
