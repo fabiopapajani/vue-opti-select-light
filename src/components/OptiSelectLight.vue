@@ -296,6 +296,8 @@ export default {
       }
     }
     .dropdown-menu {
+      max-height: 400px;
+      overflow-y: auto;
       .dropdown-item {
         &.selected, &:active {
           color: #16181b;
