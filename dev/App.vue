@@ -70,6 +70,7 @@
           option-type="checkbox"
           button-placeholder="Select accounts"
           :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          select-first
           button-block>
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
             ☆ <b>Select Options Options Options {{options.length}}</b>

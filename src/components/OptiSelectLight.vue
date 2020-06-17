@@ -60,6 +60,7 @@ export default {
   props: {
     value: { type: Array, default: () => [] },
     default: { type: Array, default: () => [] },
+    selectFirst: { type: Boolean, default: false },
     options: { type: Array, default: () => [] },
     uniqueKey: { type: [String, Function], default: 'value' },
     labelKey: { type: [String, Function], default: 'content' },
@@ -95,6 +96,10 @@ export default {
         const key = this.$_optionKey(option)
         if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
       })
+    } else if (this.selectFirst) {
+      // Set Default Firs Option
+      const key = this.$_optionKey(this.$c_options.array[0])
+      this.add(key)
     }
   },
   computed: {

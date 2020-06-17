@@ -23,6 +23,7 @@ npm run lint
 | Name | Description |
 | ------ | ------ |
 | default | [Array of keys] |
+| selectFirst | Boolean default => FALSE |
 | options | [Array of object] |
 | uniqueKey | String OR Function(option) => "String" |
 | labelKey | String OR Function(option) => "String" |
