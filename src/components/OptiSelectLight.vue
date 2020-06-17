@@ -31,10 +31,10 @@
           
           <template v-for="(option, j) in groupedOptions.options">
             <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-            <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.name] === option.private.key) }, 'dropdown-item m-0']" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
-              <div class="option-select pull-left mr-2" v-if="option.type">
-                <input v-if="option.type === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
-                <input v-else-if="option.type === 'radio'" type="radio" :value="option.private.key" :name="option.name" v-model="selected[option.name]" @click="$_clickInput">
+            <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, 'dropdown-item m-0']" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
+              <div class="option-select pull-left mr-2" v-if="option.inputType">
+                <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
+                <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
               </div>
               <div class="option-content">
                 <slot v-if="$_slot(`ITEM_${option.private.key}`)" :name="`ITEM_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
@@ -124,25 +124,25 @@ export default {
         const label = this.$_optionLabel(_option)
         const option = Object.assign({}, _option, { private: { key, label } })
         // Option Type Priorities: 1-> Option, 2-> Group, 3-> Prop
-        if (option.type) {
+        if (option.inputType) {
           // Option
-          if (option.type === 'radio') {
-            option.name = this.$_radioName(option.name || 'global')
+          if (option.inputType === 'radio') {
+            option.inputName = this.$_radioName(option.inputName || 'global')
           }
-        } else if (computedOptions.groupsMap[option.group] && computedOptions.groupsMap[option.group].type) {
+        } else if (computedOptions.groupsMap[option.group] && computedOptions.groupsMap[option.group].inputType) {
           // Group
           const group = computedOptions.groupsMap[option.group]
-          option.type = group.type
-          if (option.type === 'radio') {
-            option.name = this.groupBoundary ? this.$_radioName(group.value) : this.$_radioName('global')
+          option.inputType = group.inputType
+          if (option.inputType === 'radio') {
+            option.inputName = this.groupBoundary ? this.$_radioName(group.value) : this.$_radioName('global')
           }
         } else if (this.optionType !== 'default') {
           // Prop
           if (this.optionType === 'checkbox') {
-            option.type = 'checkbox'
+            option.inputType = 'checkbox'
           } else if (this.optionType === 'radio') {
-            option.type = 'radio'
-            option.name = this.$_radioName('global')
+            option.inputType = 'radio'
+            option.inputName = this.$_radioName('global')
           }
         }
 
@@ -195,9 +195,9 @@ export default {
           if (this.selected[option.private.key]) {
             this.$delete(this.selected, option.private.key)
             this.$delete(this.selectedMap, option.private.key)
-          } else if (this.selected[option.name] === option.private.key) {
-            this.$delete(this.selected, option.name)
-            this.$delete(this.selectedMap, option.name)
+          } else if (this.selected[option.inputName] === option.private.key) {
+            this.$delete(this.selected, option.inputName)
+            this.$delete(this.selectedMap, option.inputName)
           }
         })
         this.$_emit()
@@ -227,18 +227,18 @@ export default {
     },
     $_selectItem (option) {
       this.$_setItem(option)
-      if (!option.type) this.$refs['dd-light'].hide() // Close Dropdown on select
+      if (!option.inputType) this.$refs['dd-light'].hide() // Close Dropdown on select
       if (!this.touched) this.touched = true
       if (this.emitOnClick) this.$_emit()
     },
     $_setItem (option, trigger = false) {
-      if (!option.type) {
+      if (!option.inputType) {
         this.selected = {}
         this.$set(this.selected, option.private.key, true)
         this.selectedMap = {}
         this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
         if (trigger) this.$emit('change', this.$_originalOption(option.private.key), true)
-      } else if (option.type === 'checkbox') {
+      } else if (option.inputType === 'checkbox') {
         if (!this.selected[option.private.key]) {
           this.$set(this.selected, option.private.key, true)
           this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
@@ -248,9 +248,9 @@ export default {
           this.$delete(this.selectedMap, option.private.key)
           if (trigger) this.$emit('change', this.$_originalOption(option.private.key), false)
         }
-      } else if (option.type === 'radio') {
-        this.$set(this.selected, option.name, option.private.key)
-        this.$set(this.selectedMap, option.name, this.$_originalOption(option.private.key))
+      } else if (option.inputType === 'radio') {
+        this.$set(this.selected, option.inputName, option.private.key)
+        this.$set(this.selectedMap, option.inputName, this.$_originalOption(option.private.key))
         if (trigger) this.$emit('change', this.$_originalOption(option.private.key), true)
       }
     },

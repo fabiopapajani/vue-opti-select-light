@@ -113,15 +113,15 @@ export default {
         items: [
           { value: 'a', content: 'A', optionalData: { fn: () => 'testA' } },
           { value: 'b', content: 'B', optionalData: { fn: () => 'testB' }, disabled: true },
-          { value: 'c', content: 'C', optionalData: { fn: () => 'testC' }, type: 'radio', name: 'ac' },
-          { value: 'd', content: 'D', optionalData: { fn: () => 'testD' }, type: 'radio', name: 'ac' },
-          { value: 'e', content: 'E', optionalData: { fn: () => 'testE' }, type: 'checkbox' },
-          { value: 'f', content: 'F', optionalData: { fn: () => 'testF' }, type: 'checkbox' },
+          { value: 'c', content: 'C', optionalData: { fn: () => 'testC' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'd', content: 'D', optionalData: { fn: () => 'testD' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'e', content: 'E', optionalData: { fn: () => 'testE' }, inputType: 'checkbox' },
+          { value: 'f', content: 'F', optionalData: { fn: () => 'testF' }, inputType: 'checkbox' },
           { value: 'g', content: 'G', optionalData: { fn: () => 'testG' }, group: 'ts' },
           { value: 'h', content: 'H', optionalData: { fn: () => 'testH' }, group: 'ts' },
           { value: 'i', content: 'I', optionalData: { fn: () => 'testI' }, group: 'ts' },
           { value: 'j', content: 'J', optionalData: { fn: () => 'testJ' }, group: 'tr' },
-          { value: 'xx', content: 'XX', optionalData: { fn: () => 'testXX' }, type: 'checkbox' },
+          { value: 'xx', content: 'XX', optionalData: { fn: () => 'testXX' }, inputType: 'checkbox' },
           { value: 'k', content: 'K', optionalData: { fn: () => 'testK' }, group: 'tr' },
           { value: 'l', content: 'L', optionalData: { fn: () => 'testL' }, group: 'tr' },
           { value: 'm', content: 'M', optionalData: { fn: () => 'testM' }, group: 'ga' },
@@ -222,8 +222,8 @@ export default {
         ]
       },
       groups: [
-        { value: 'ts', content: 'Traffic Sources', type: 'checkbox' },
-        { value: 'tr', content: 'Trackers', type: 'radio' },
+        { value: 'ts', content: 'Traffic Sources', inputType: 'checkbox' },
+        { value: 'tr', content: 'Trackers', inputType: 'radio' },
         { value: 'ga', content: 'Google Analytics' },
         { value: 'other', content: 'Other' }
       ]
