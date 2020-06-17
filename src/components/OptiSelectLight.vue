@@ -44,7 +44,6 @@
 </template>
 
 <script>
-// import _ from 'lodash'
 
 export default {
   name: 'vue-opti-select-light',
