@@ -38,6 +38,51 @@
         </vue-opti-select-light>
         <pre v-if="models.simpleSelect">{{models.simpleSelect}}</pre>
       </div>
+      <div class="col-md-3">
+        <h4>Types single select</h4>
+        <vue-opti-select-light 
+          ref="selectTypes"
+          unique-key="id"
+          label-key="name"
+          v-model="models.typesSelect"
+          :options="options.types"
+          button-block>
+          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
+            ☆ <b>Select Options Options Options {{options.length}}</b>
+          </template> -->
+          <template #ITEM="{ option }">
+            #{{option.name}}
+          </template>
+          <template #ITEM_7="{ option }">
+            #-test{{option.name}}
+          </template>
+        </vue-opti-select-light>
+        <pre v-if="models.typesSelect">{{models.typesSelect}}</pre>
+      </div>
+      <div class="col-md-3">
+        <h4>Types multi select</h4>
+        <vue-opti-select-light 
+          ref="selectTypes"
+          unique-key="id"
+          label-key="name"
+          v-model="models.typesMultiSelect"
+          :options="options.types"
+          option-type="checkbox"
+          button-placeholder="Select accounts"
+          :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          button-block>
+          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
+            ☆ <b>Select Options Options Options {{options.length}}</b>
+          </template> -->
+          <template #ITEM="{ option }">
+            #{{option.name}}
+          </template>
+          <template #ITEM_7="{ option }">
+            #-test{{option.name}}
+          </template>
+        </vue-opti-select-light>
+        <pre v-if="models.typesMultiSelect">{{models.typesMultiSelect}}</pre>
+      </div>
     </div>
     
   </div>
@@ -59,7 +104,9 @@ export default {
   data () {
     return {
       models: {
-        simpleSelect: null
+        simpleSelect: null,
+        typesSelect: [],
+        typesMultiSelect: []
       },
       options: {
         items: [
@@ -79,6 +126,98 @@ export default {
           { value: 'm', content: 'M', optionalData: { fn: () => 'testM' }, group: 'ga' },
           { value: 'n', content: 'N', optionalData: { fn: () => 'testN' }, group: 'ga' },
           { value: 'o', content: 'O', optionalData: { fn: () => 'testO' }, group: 'ga' }
+        ],
+        types: [
+          {
+              "id":6,
+              "name":"RevContent",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"RevContent"
+          },
+          {
+              "id":7,
+              "name":"Taboola",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Taboola"
+          },
+          {
+              "id":8,
+              "name":"ContentAd",
+              "timezone":"America/Los_Angeles",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"ContentAd"
+          },
+          {
+              "id":9,
+              "name":"Mgid",
+              "timezone":"America/Los_Angeles",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Mgid"
+          },
+          {
+              "id":13,
+              "name":"Outbrain",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Outbrain"
+          },
+          {
+              "id":14,
+              "name":"Adskeeper",
+              "timezone":"America/Los_Angeles",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Adskeeper"
+          },
+          {
+              "id":15,
+              "name":"Yahoo Gemini",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Gemini"
+          },
+          {
+              "id":21,
+              "name":"VoluumDSP",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"VoluumDSP"
+          },
+          {
+              "id":23,
+              "name":"Runative",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Runative"
+          },
+          {
+              "id":24,
+              "name":"ActiveRevenue (beta)",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"ActiveRevenue"
+          }
         ]
       },
       groups: [

@@ -19,10 +19,6 @@ npm run build-bundle
 ```sh
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
 ### Props
 | Name | Description |
 | ------ | ------ |
@@ -34,8 +30,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 | groupBoundary | Boolean default => TRUE, Radio button case |
 | buttonType | String default "placeholder", options => "filter" |
 | buttonNoCaret | Boolean default => FALSE |
+| buttonBlock | Boolean default => FALSE |
+| buttonSize | String default => "sm" |
 | optionType | String default "default", options => "radio", "checkbox" |
 | buttonPlaceholder | String default "Select Option" |
+| buttonPlaceholderMultiple | Function({ count, suffix })  => `${count} item${suffix} selected` |
 | lazy | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |
 

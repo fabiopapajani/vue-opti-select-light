@@ -1,12 +1,22 @@
 <template>
   <div :class="[{ 'empty': $c_model.length === 0 }, 'vue-opti-select-light']">
-    <b-dd :lazy="lazy" ref="dd-light" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
+    <b-dd :lazy="lazy" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
       <template #button-content>
         <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model"></slot>
-        <span class="button-placehoder-filter" v-else-if="buttonType === 'filter'">
+        <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
           <i class="fa fa-filter"></i><b-badge pill variant="info">{{$c_model.length}}</b-badge>
         </span>
-        <span class="button-placehoder-default" v-else v-html="buttonPlaceholder"></span>
+        <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
+        <span v-else class="button-placehoder-selected">
+          <template v-if="$c_oneOptionSelectedLocal">
+            <slot v-if="$_slot(`ITEM_${$c_oneOptionSelectedLocal.private.key}`)" :name="`ITEM_${$c_oneOptionSelectedLocal.private.key}`" :option="$_originalOption($c_oneOptionSelectedLocal.private.key)"></slot>
+            <slot v-else-if="$_slot('ITEM')" name="ITEM" :option="$_originalOption($c_oneOptionSelectedLocal.private.key)"></slot>
+            <span v-else v-html="$c_oneOptionSelectedLocal.private.label"></span>
+          </template>
+          <template v-else>
+            {{buttonPlaceholderMultiple({ count: $c_model.length, suffix: $c_model.length > 1 ? '\'s' : '' })}}
+          </template>
+        </span>
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <template v-for="(groupedOptions, i) in $c_localOptions.array">
@@ -60,8 +70,11 @@ export default {
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
     buttonType: { type: String, default: 'placeholder' },
     buttonNoCaret: { type: Boolean, default: false },
+    buttonBlock: { type: Boolean, default: false },
+    buttonSize: { type: String, default: 'sm' },
     optionType: { type: String, default: 'default' },
     buttonPlaceholder: { type: String, default: 'Select Option' },
+    buttonPlaceholderMultiple: { type: Function, default: ({ count, suffix }) => `${count} item${suffix} selected` },
     lazy: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
   },
@@ -150,7 +163,14 @@ export default {
     },
     $c_buttonNoCaret () {
       return this.buttonNoCaret || this.buttonType === 'filter'
-    }
+    },
+    $c_oneOptionSelectedLocal () {
+      if (this.$c_model.length === 1) {
+        const key = this.$_optionKey(this.$c_model[0])
+        return this.$c_localOptions.map[key]
+      }
+      return null;
+    },
   },
   methods: {
     add (value) {
@@ -262,6 +282,11 @@ export default {
         .badge {
           top: -17px;
           right: -4px;
+        }
+      }
+      &.btn-block {
+        &+ .dropdown-menu {
+          width: 100%;
         }
       }
     }
