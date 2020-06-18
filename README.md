@@ -58,7 +58,8 @@ npm run lint
 | Name | Description |
 | ------ | ------ |
 | @input | Function([Array]) |
-| @change | Function({Object}, Boolean) |
+| @click | Function({Object}, Boolean) |
+| @change | Function([Array]), Exec when hidden |
 | @shown | Dropdown shown |
 | @hidden | Dropdown hidden |
 

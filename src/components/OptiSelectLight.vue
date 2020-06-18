@@ -226,7 +226,7 @@ export default {
       return this.$c_options.map[key]
     },
     $_selectItem (option) {
-      this.$_setItem(option)
+      this.$_setItem(option, true)
       if (!option.inputType) this.$refs['dd-light'].hide() // Close Dropdown on select
       if (!this.touched) this.touched = true
       if (this.emitOnClick) this.$_emit()
@@ -237,21 +237,21 @@ export default {
         this.$set(this.selected, option.private.key, true)
         this.selectedMap = {}
         this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
-        if (trigger) this.$emit('change', this.$_originalOption(option.private.key), true)
+        if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
       } else if (option.inputType === 'checkbox') {
         if (!this.selected[option.private.key]) {
           this.$set(this.selected, option.private.key, true)
           this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
-          if (trigger) this.$emit('change', this.$_originalOption(option.private.key), true)
+          if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
         } else {
           this.$delete(this.selected, option.private.key)
           this.$delete(this.selectedMap, option.private.key)
-          if (trigger) this.$emit('change', this.$_originalOption(option.private.key), false)
+          if (trigger) this.$emit('click', this.$_originalOption(option.private.key), false)
         }
       } else if (option.inputType === 'radio') {
         this.$set(this.selected, option.inputName, option.private.key)
         this.$set(this.selectedMap, option.inputName, this.$_originalOption(option.private.key))
-        if (trigger) this.$emit('change', this.$_originalOption(option.private.key), true)
+        if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
       }
     },
     $_clickInput () {
@@ -268,9 +268,8 @@ export default {
       this.$emit('shown')
     },
     $_hidden () {
-      if (!this.emitOnClick && this.touched) {
-        this.$_emit()
-      }
+      if (!this.emitOnClick && this.touched) this.$_emit()
+      if (this.touched) this.$emit('change', this.$c_model)
       this.$emit('hidden')
     }
   }

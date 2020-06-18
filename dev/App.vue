@@ -70,6 +70,8 @@
           option-type="checkbox"
           button-placeholder="Select accounts"
           :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          @change="$_onChange"
+          @click="$_onClick"
           select-first
           button-block>
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
@@ -230,9 +232,17 @@ export default {
     }
   },
   created () {
-    // setTimeout(() => {
-    //   this.$refs.select.remove('a')
-    // }, 3000)
+    setTimeout(() => {
+      this.$refs.selectTypes.add(14)
+    }, 3000)
+  },
+  methods: {
+    $_onChange(values) {
+      console.log('@change', values)
+    },
+    $_onClick(value) {
+      console.log('@click', value)
+    },
   }
 }
 </script>
