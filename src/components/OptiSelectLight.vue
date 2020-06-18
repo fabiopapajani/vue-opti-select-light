@@ -14,7 +14,7 @@
             <span v-else v-html="$c_oneOptionSelectedLocal.private.label"></span>
           </template>
           <template v-else>
-            {{buttonPlaceholderMultiple({ count: $c_model.length, suffix: $c_model.length > 1 ? '\'s' : '' })}}
+            {{buttonPlaceholderMultiple({ count: $c_model.length, suffix: $c_model.length > 1 ? 's' : '' })}}
           </template>
         </span>
       </template>
