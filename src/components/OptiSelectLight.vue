@@ -1,12 +1,13 @@
 <template>
-  <div :class="[{ 'empty': $c_model.length === 0 }, 'vue-opti-select-light']">
+  <div :class="[{ 'empty': $c_model.length === 0, 'allSelected': $c_allSelected }, 'vue-opti-select-light']">
     <b-dd :lazy="lazy" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
       <template #button-content>
-        <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model"></slot>
+        <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model" :allSelected="$c_allSelected"></slot>
         <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
           <i class="fa fa-filter"></i><b-badge pill variant="info">{{$c_model.length}}</b-badge>
         </span>
         <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
+        <span v-else-if="buttonPlaceholderAllSelected && $c_allSelected" v-html="buttonPlaceholderAllSelected"></span>
         <span v-else class="button-placehoder-selected">
           <template v-if="$c_oneOptionSelectedLocal">
             <slot v-if="$_slot(`ITEM_${$c_oneOptionSelectedLocal.private.key}`)" :name="`ITEM_${$c_oneOptionSelectedLocal.private.key}`" :option="$_originalOption($c_oneOptionSelectedLocal.private.key)"></slot>
@@ -75,6 +76,7 @@ export default {
     buttonSize: { type: String, default: 'sm' },
     optionType: { type: String, default: 'default' },
     buttonPlaceholder: { type: String, default: 'Select Option' },
+    buttonPlaceholderAllSelected: { type: String, default: '' },
     buttonPlaceholderMultiple: { type: Function, default: ({ count, suffix }) => `${count} item${suffix} selected` },
     lazy: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
@@ -175,6 +177,9 @@ export default {
         return this.$c_localOptions.map[key]
       }
       return null;
+    },
+    $c_allSelected () {
+      return this.$c_model.length === this.$c_options.array.length
     },
   },
   methods: {

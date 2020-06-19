@@ -35,6 +35,7 @@ npm run lint
 | buttonSize | String default => "sm" |
 | optionType | String default "default", options => "radio", "checkbox" |
 | buttonPlaceholder | String default "Select Option" |
+| buttonPlaceholderAllSelected | String default "" |
 | buttonPlaceholderMultiple | Function({ count, suffix })  => `${count} item${suffix} selected` |
 | lazy | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |

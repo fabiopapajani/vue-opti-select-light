@@ -69,6 +69,7 @@
           :options="options.types"
           option-type="checkbox"
           button-placeholder="Select accounts"
+          button-placeholder-all-selected="All accounts"
           :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
           @change="$_onChange"
           @click="$_onClick"
