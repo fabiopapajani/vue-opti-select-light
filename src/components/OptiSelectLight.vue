@@ -7,7 +7,7 @@
           <i class="fa fa-filter"></i><b-badge pill variant="info">{{$c_model.length}}</b-badge>
         </span>
         <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
-        <span v-else-if="buttonPlaceholderAllSelected && $c_allSelected" v-html="buttonPlaceholderAllSelected"></span>
+        <span v-else-if="buttonPlaceholderAllSelected && $c_allSelected && $c_model.length > 1" v-html="buttonPlaceholderAllSelected"></span>
         <span v-else class="button-placehoder-selected">
           <template v-if="$c_oneOptionSelectedLocal">
             <slot v-if="$_slot(`ITEM_${$c_oneOptionSelectedLocal.private.key}`)" :name="`ITEM_${$c_oneOptionSelectedLocal.private.key}`" :option="$_originalOption($c_oneOptionSelectedLocal.private.key)"></slot>
