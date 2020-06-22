@@ -27,6 +27,9 @@ npm run lint
 | options | [Array of object] |
 | uniqueKey | String OR Function(option) => "String" |
 | labelKey | String OR Function(option) => "String" |
+| searchable | Boolean default => FALSE |
+| searchFields | [Array or Function],  Default ['content'] |
+| searchPlaceholder | String default "Search..." |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
 | buttonType | String default "placeholder", options => "filter" |
@@ -45,6 +48,7 @@ npm run lint
 | ------ | ------ |
 | BUTTON_PLACEHOLDER | slot-scope="{ options }" |
 | HEADER | |
+| HEADER_2 | Slot after search |
 | FOOTER | |
 | GROUP | slot-scope="{ group }" |
 | GROUP_[name] | slot-scope="{ group }" |

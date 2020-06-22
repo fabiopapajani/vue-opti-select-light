@@ -10,6 +10,8 @@
           :groups="groups"
           button-placeholder="Select"
           button-type="filter"
+          searchable
+          :search-fields="['content', 'sField']"
           :default="['a', 'd', 'c', 'xx']">
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
             ☆ <b>Select Options Options Options {{options.length}}</b>
@@ -114,69 +116,69 @@ export default {
       },
       options: {
         items: [
-          { value: 'a', content: 'A', optionalData: { fn: () => 'testA' } },
-          { value: 'b', content: 'B', optionalData: { fn: () => 'testB' }, disabled: true },
-          { value: 'c', content: 'C', optionalData: { fn: () => 'testC' }, inputType: 'radio', inputName: 'ac' },
-          { value: 'd', content: 'D', optionalData: { fn: () => 'testD' }, inputType: 'radio', inputName: 'ac' },
-          { value: 'e', content: 'E', optionalData: { fn: () => 'testE' }, inputType: 'checkbox' },
-          { value: 'f', content: 'F', optionalData: { fn: () => 'testF' }, inputType: 'checkbox' },
-          { value: 'g', content: 'G', optionalData: { fn: () => 'testG' }, group: 'ts' },
-          { value: 'h', content: 'H', optionalData: { fn: () => 'testH' }, group: 'ts' },
-          { value: 'i', content: 'I', optionalData: { fn: () => 'testI' }, group: 'ts' },
-          { value: 'j', content: 'J', optionalData: { fn: () => 'testJ' }, group: 'tr' },
-          { value: 'xx', content: 'XX', optionalData: { fn: () => 'testXX' }, inputType: 'checkbox' },
-          { value: 'k', content: 'K', optionalData: { fn: () => 'testK' }, group: 'tr' },
-          { value: 'l', content: 'L', optionalData: { fn: () => 'testL' }, group: 'tr' },
-          { value: 'm', content: 'M', optionalData: { fn: () => 'testM' }, group: 'ga' },
-          { value: 'n', content: 'N', optionalData: { fn: () => 'testN' }, group: 'ga' },
-          { value: 'o', content: 'O', optionalData: { fn: () => 'testO' }, group: 'ga' }
+          { value: 'a', content: 'A', sField: '$', optionalData: { fn: () => 'testA' } },
+          { value: 'b', content: 'B', sField: '$', optionalData: { fn: () => 'testB' }, disabled: true },
+          { value: 'c', content: 'C', sField: '$', optionalData: { fn: () => 'testC' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'd', content: 'D', sField: '$', optionalData: { fn: () => 'testD' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'e', content: 'E', sField: '$', optionalData: { fn: () => 'testE' }, inputType: 'checkbox' },
+          { value: 'f', content: 'F', sField: '$', optionalData: { fn: () => 'testF' }, inputType: 'checkbox' },
+          { value: 'g', content: 'G', sField: '$', optionalData: { fn: () => 'testG' }, group: 'ts' },
+          { value: 'h', content: 'H', sField: '€', optionalData: { fn: () => 'testH' }, group: 'ts' },
+          { value: 'i', content: 'I', sField: '€', optionalData: { fn: () => 'testI' }, group: 'ts' },
+          { value: 'j', content: 'J', sField: '€', optionalData: { fn: () => 'testJ' }, group: 'tr' },
+          { value: 'xx', content: 'XX', sField: '€', optionalData: { fn: () => 'testXX' }, inputType: 'checkbox' },
+          { value: 'k', content: 'K', sField: '€', optionalData: { fn: () => 'testK' }, group: 'tr' },
+          { value: 'l', content: 'L', sField: '€', optionalData: { fn: () => 'testL' }, group: 'tr' },
+          { value: 'm', content: 'M', sField: 'ALL', optionalData: { fn: () => 'testM' }, group: 'ga' },
+          { value: 'n', content: 'N', sField: 'ALL', optionalData: { fn: () => 'testN' }, group: 'ga' },
+          { value: 'o', content: 'O', sField: 'ALL', optionalData: { fn: () => 'testO' }, group: 'ga' }
         ],
         types: [
-          {
-              "id":6,
-              "name":"RevContent",
-              "timezone":"America/New_York",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"RevContent"
-          },
-          {
-              "id":7,
-              "name":"Taboola",
-              "timezone":"America/New_York",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"Taboola"
-          },
-          {
-              "id":8,
-              "name":"ContentAd",
-              "timezone":"America/Los_Angeles",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"ContentAd"
-          },
-          {
-              "id":9,
-              "name":"Mgid",
-              "timezone":"America/Los_Angeles",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"Mgid"
-          },
-          {
-              "id":13,
-              "name":"Outbrain",
-              "timezone":"America/New_York",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"Outbrain"
-          },
+          // {
+          //     "id":6,
+          //     "name":"RevContent",
+          //     "timezone":"America/New_York",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"RevContent"
+          // },
+          // {
+          //     "id":7,
+          //     "name":"Taboola",
+          //     "timezone":"America/New_York",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"Taboola"
+          // },
+          // {
+          //     "id":8,
+          //     "name":"ContentAd",
+          //     "timezone":"America/Los_Angeles",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"ContentAd"
+          // },
+          // {
+          //     "id":9,
+          //     "name":"Mgid",
+          //     "timezone":"America/Los_Angeles",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"Mgid"
+          // },
+          // {
+          //     "id":13,
+          //     "name":"Outbrain",
+          //     "timezone":"America/New_York",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"Outbrain"
+          // },
           {
               "id":14,
               "name":"Adskeeper",
@@ -186,42 +188,42 @@ export default {
               "updated_at":"2020-01-23T10:18:24.610Z",
               "uniqueName":"Adskeeper"
           },
-          {
-              "id":15,
-              "name":"Yahoo Gemini",
-              "timezone":"UTC",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"Gemini"
-          },
-          {
-              "id":21,
-              "name":"VoluumDSP",
-              "timezone":"America/New_York",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"VoluumDSP"
-          },
-          {
-              "id":23,
-              "name":"Runative",
-              "timezone":"UTC",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"Runative"
-          },
-          {
-              "id":24,
-              "name":"ActiveRevenue (beta)",
-              "timezone":"UTC",
-              "platform":"native",
-              "created_at":"2020-01-23T10:18:24.610Z",
-              "updated_at":"2020-01-23T10:18:24.610Z",
-              "uniqueName":"ActiveRevenue"
-          }
+          // {
+          //     "id":15,
+          //     "name":"Yahoo Gemini",
+          //     "timezone":"UTC",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"Gemini"
+          // },
+          // {
+          //     "id":21,
+          //     "name":"VoluumDSP",
+          //     "timezone":"America/New_York",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"VoluumDSP"
+          // },
+          // {
+          //     "id":23,
+          //     "name":"Runative",
+          //     "timezone":"UTC",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"Runative"
+          // },
+          // {
+          //     "id":24,
+          //     "name":"ActiveRevenue (beta)",
+          //     "timezone":"UTC",
+          //     "platform":"native",
+          //     "created_at":"2020-01-23T10:18:24.610Z",
+          //     "updated_at":"2020-01-23T10:18:24.610Z",
+          //     "uniqueName":"ActiveRevenue"
+          // }
         ]
       },
       groups: [

@@ -20,7 +20,12 @@
         </span>
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
-      <template v-for="(groupedOptions, i) in $c_localOptions.array">
+      <b-dd-header v-if="searchable">
+        <input type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
+      </b-dd-header>
+      <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
+      <div class="options-list">
+      <template v-for="(groupedOptions, i) in $c_localSearchableOptions">
         <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :header="groupedOptions.group.content || ''" :key="`component-${i}`">
           <slot v-if="groupedOptions.group && $_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
           <template #header v-if="groupedOptions.group && $_slot(`GROUP_${groupedOptions.group.value}`)" >
@@ -49,6 +54,7 @@
           <slot v-if="groupedOptions.group && $_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
         </component>
       </template>
+      </div>
       <slot v-if="$_slot('FOOTER')" name="FOOTER"></slot>
     </b-dd>
   </div>
@@ -66,7 +72,7 @@ export default {
     uniqueKey: { type: [String, Function], default: 'value' },
     labelKey: { type: [String, Function], default: 'content' },
     searchable: { type: Boolean, default: false },
-    searchFields: { type: Array, default: () => ['content'] },
+    searchFields: { type: [Array, Function], default: () => ['content'] },
     searchPlaceholder: { type: String, default: 'Search...' },
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
@@ -85,6 +91,7 @@ export default {
     return {
       selected: {}, // Internal usage
       selectedMap: {}, // Mapped Internal model
+      searchModel: '',
       touched: false // True when has touched (has changes)
     }
   },
@@ -125,6 +132,7 @@ export default {
         const key = this.$_optionKey(_option)
         const label = this.$_optionLabel(_option)
         const option = Object.assign({}, _option, { private: { key, label } })
+        
         // Option Type Priorities: 1-> Option, 2-> Group, 3-> Prop
         if (option.inputType) {
           // Option
@@ -161,9 +169,27 @@ export default {
           computedOptions.array.push({ group: false, options: [option] })
         }
 
+        // Add Search Pattern
+        if (this.searchable) option.private.searchPattern = this.$_getSearchPattern(option, computedOptions.groupsMap[option.group])
+
         computedOptions.map[key] = option
       })
       return computedOptions
+    },
+    $c_localSearchableOptions () {
+      const searchValue = this.searchModel.trim().toLowerCase()
+      if (this.searchable && searchValue) {
+        const options = []
+        this.$c_localOptions.array.forEach(item => {
+          const filteredOptions = item.options.filter(option => option.private.searchPattern.includes(searchValue))
+          if (filteredOptions.length) {
+            options.push(Object.assign({}, item, { options: filteredOptions }))
+          }
+        })
+        return options
+      } else {
+        return this.$c_localOptions.array
+      }
     },
     $c_model () {
       return Object.values(this.selectedMap)
@@ -275,7 +301,27 @@ export default {
     $_hidden () {
       if (!this.emitOnClick && this.touched) this.$_emit()
       if (this.touched) this.$emit('change', this.$c_model)
+      if (this.searchModel) this.searchModel = ''
       this.$emit('hidden')
+    },
+    $_getSearchPattern (option, group) {
+      if (this.searchable) {
+        let values = []
+        if (Array.isArray(this.searchFields)) {
+          this.searchFields.forEach(_key => {
+            try {
+              values.push(option[_key])
+            } catch (err) { /** DO NOTHING */ }
+          })
+        } else {
+          values = this.searchFields(option)
+        }
+        // Make group searchable
+        if (group && group.content) values.push(group.content)
+
+        return values.join('§§').toLowerCase()
+      }
+      return null
     }
   }
 }
@@ -300,15 +346,17 @@ export default {
       }
     }
     .dropdown-menu {
-      max-height: 400px;
-      overflow-y: auto;
-      .dropdown-item {
-        &.selected, &:active {
-          color: #16181b;
-          background-color: #eee;
-        }
-        .option-select {
-          pointer-events: none;
+      .options-list {
+        max-height: 400px;
+        overflow-y: auto;
+        .dropdown-item {
+          &.selected, &:active {
+            color: #16181b;
+            background-color: #eee;
+          }
+          .option-select {
+            pointer-events: none;
+          }
         }
       }
     }
