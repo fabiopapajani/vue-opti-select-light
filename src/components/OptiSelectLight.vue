@@ -20,7 +20,7 @@
         </span>
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
-      <b-dd-header v-if="searchable">
+      <b-dd-header v-if="searchable" class="search-container">
         <input type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
