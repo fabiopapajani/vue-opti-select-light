@@ -22,39 +22,44 @@
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <b-dd-header v-if="searchable" class="search-container">
         <input type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
+        <span v-show="searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
       <div class="options-list">
-      <template v-for="(groupedOptions, i) in $c_localSearchableOptions">
-        <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :header="groupedOptions.group.content || ''" :key="`component-${i}`">
-          <slot v-if="groupedOptions.group && $_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-          <template #header v-if="groupedOptions.group && $_slot(`GROUP_${groupedOptions.group.value}`)" >
-            <slot :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-          </template>
-          <template #header v-else-if="groupedOptions.group && $_slot('GROUP')" >
-            <slot name="GROUP" :group="groupedOptions.group"></slot>
-          </template>
-          
-          <template v-for="(option, j) in groupedOptions.options">
-            <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-            <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, 'dropdown-item m-0']" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
-              <div class="option-select pull-left mr-2" v-if="option.inputType">
-                <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
-                <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
-              </div>
-              <div class="option-content">
-                <slot v-if="$_slot(`ITEM_${option.private.key}`)" :name="`ITEM_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-                <slot v-else-if="$_slot('ITEM')" name="ITEM" :option="$_originalOption(option.private.key)"></slot>
-                <span v-else v-html="option.private.label"></span>
-              </div>
-            </label>
-            <slot v-if="$_slot(`ITEM_AFTER_${option.private.key}`)" :name="`ITEM_AFTER_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-          </template>
+        <template v-for="(groupedOptions, i) in $c_localSearchableOptions">
+          <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :header="groupedOptions.group.content || ''" :key="`component-${i}`">
+            <slot v-if="groupedOptions.group && $_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+            <template #header v-if="groupedOptions.group && $_slot(`GROUP_${groupedOptions.group.value}`)" >
+              <slot :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+            </template>
+            <template #header v-else-if="groupedOptions.group && $_slot('GROUP')" >
+              <slot name="GROUP" :group="groupedOptions.group"></slot>
+            </template>
+            
+            <template v-for="(option, j) in groupedOptions.options">
+              <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+              <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, 'dropdown-item m-0']" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
+                <div class="option-select pull-left mr-2" v-if="option.inputType">
+                  <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
+                  <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
+                </div>
+                <div class="option-content">
+                  <slot v-if="$_slot(`ITEM_${option.private.key}`)" :name="`ITEM_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+                  <slot v-else-if="$_slot('ITEM')" name="ITEM" :option="$_originalOption(option.private.key)"></slot>
+                  <span v-else v-html="option.private.label"></span>
+                </div>
+              </label>
+              <slot v-if="$_slot(`ITEM_AFTER_${option.private.key}`)" :name="`ITEM_AFTER_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+            </template>
 
-          <slot v-if="groupedOptions.group && $_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-        </component>
-      </template>
+            <slot v-if="groupedOptions.group && $_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+          </component>
+        </template>
       </div>
+      <template v-if="searchModel.length && $c_localSearchableOptions.length === 0">
+        <slot v-if="$_slot('SEARCH_NO_RESULTS')" name="SEARCH_NO_RESULTS"></slot>
+        <div v-else class="search-no-results" v-html="searchNoResultsPlaceholder"></div>
+      </template>
       <slot v-if="$_slot('FOOTER')" name="FOOTER"></slot>
     </b-dd>
   </div>
@@ -74,6 +79,7 @@ export default {
     searchable: { type: Boolean, default: false },
     searchFields: { type: [Array, Function], default: () => ['content'] },
     searchPlaceholder: { type: String, default: 'Search...' },
+    searchNoResultsPlaceholder: { type: String, default: 'No results found...' },
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
     buttonType: { type: String, default: 'placeholder' },
@@ -322,6 +328,9 @@ export default {
         return values.join('§§').toLowerCase()
       }
       return null
+    },
+    $_clearSearch () {
+      this.searchModel = ''
     }
   }
 }
@@ -346,6 +355,20 @@ export default {
       }
     }
     .dropdown-menu {
+      .search-container {
+        header {
+          position: relative;
+          .btn-clear-search {
+            position: absolute;
+            right: 29px;
+            top: 9px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #6c757d;
+            cursor: pointer;
+          }
+        }
+      }
       .options-list {
         max-height: 400px;
         overflow-y: auto;

@@ -30,6 +30,7 @@ npm run lint
 | searchable | Boolean default => FALSE |
 | searchFields | [Array or Function],  Default ['content'] |
 | searchPlaceholder | String default "Search..." |
+| searchNoResultsPlaceholder | String default "No results found..." |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
 | buttonType | String default "placeholder", options => "filter" |
@@ -58,6 +59,7 @@ npm run lint
 | ITEM_[name] | slot-scope="{ option }" |
 | ITEM_BEFORE_[name] | slot-scope="{ option }" |
 | ITEM_AFTER_[name] | slot-scope="{ option }" |
+| SEARCH_NO_RESULTS | |
 
 ### Events
 | Name | Description |
