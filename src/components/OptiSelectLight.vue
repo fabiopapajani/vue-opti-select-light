@@ -38,7 +38,7 @@
             
             <template v-for="(option, j) in groupedOptions.options">
               <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-              <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, 'dropdown-item m-0']" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
+              <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, `dropdown-item dropdown-item-${option.inputType || 'text'} m-0`]" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
                 <div class="option-select pull-left mr-2" v-if="option.inputType">
                   <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
                   <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
@@ -86,7 +86,7 @@ export default {
     buttonNoCaret: { type: Boolean, default: false },
     buttonBlock: { type: Boolean, default: false },
     buttonSize: { type: String, default: 'sm' },
-    optionType: { type: String, default: 'default' },
+    optionType: { type: String, default: 'text' },
     buttonPlaceholder: { type: String, default: 'Select Option' },
     buttonPlaceholderAllSelected: { type: String, default: '' },
     buttonPlaceholderMultiple: { type: Function, default: ({ count, suffix }) => `${count} item${suffix} selected` },
@@ -152,7 +152,7 @@ export default {
           if (option.inputType === 'radio') {
             option.inputName = this.groupBoundary ? this.$_radioName(group.value) : this.$_radioName('global')
           }
-        } else if (this.optionType !== 'default') {
+        } else if (this.optionType !== 'text') {
           // Prop
           if (this.optionType === 'checkbox') {
             option.inputType = 'checkbox'

@@ -33,11 +33,11 @@ npm run lint
 | searchNoResultsPlaceholder | String default "No results found..." |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
-| buttonType | String default "placeholder", options => "filter" |
+| buttonType | String default "placeholder", options => "filter", "static" |
 | buttonNoCaret | Boolean default => FALSE |
 | buttonBlock | Boolean default => FALSE |
 | buttonSize | String default => "sm" |
-| optionType | String default "default", options => "radio", "checkbox" |
+| optionType | String default "text", options => "radio", "checkbox" |
 | buttonPlaceholder | String default "Select Option" |
 | buttonPlaceholderAllSelected | String default "" |
 | buttonPlaceholderMultiple | Function({ count, suffix })  => `${count} item${suffix} selected` |
