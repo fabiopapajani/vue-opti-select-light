@@ -4,7 +4,7 @@
       <template #button-content>
         <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model" :allSelected="$c_allSelected"></slot>
         <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
-          <i class="fa fa-filter"></i><b-badge pill variant="info">{{$c_model.length}}</b-badge>
+          <i class="fa fa-filter"></i><b-badge v-show="$c_model.length" pill variant="info">{{$c_model.length}}</b-badge>
         </span>
         <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
         <span v-else-if="buttonPlaceholderAllSelected && $c_allSelected && $c_model.length > 1" v-html="buttonPlaceholderAllSelected"></span>
@@ -343,9 +343,12 @@ export default {
       .button-placehoder-filter {
         width: 13px;
         display: inline-block;
+        position: relative;
         .badge {
-          top: -17px;
-          right: -4px;
+          top: -14px;
+          right: -20px;
+          line-height: 13px;
+          position: absolute;
         }
       }
       &.btn-block {
