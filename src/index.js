@@ -1,20 +1,20 @@
-import OptiSelectLight from './components/OptiSelectLight';
+import VueOptiSelectLight from './components/OptiSelectLight';
 
 function install(Vue) {
-  Vue.component(OptiSelectLight.name, OptiSelectLight);
+  Vue.component(VueOptiSelectLight.name, VueOptiSelectLight);
 }
 
-const OptiSelectLightPlugin = {
+const VueOptiSelectLightPlugin = {
   install,
 };
 
 // Automatic installation if Vue has been added to the global scope.
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(OptiSelectLightPlugin);
+  window.Vue.use(VueOptiSelectLightPlugin);
 }
 
-export default OptiSelectLightPlugin;
+export default VueOptiSelectLightPlugin;
 export {
-  OptiSelectLight
+  VueOptiSelectLight
 };
 
