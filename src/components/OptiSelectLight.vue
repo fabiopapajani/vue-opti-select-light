@@ -21,7 +21,7 @@
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <b-dd-header v-if="searchable" class="search-container">
-        <input type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
+        <input ref="dd-light-search" type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
         <span v-show="searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
@@ -305,6 +305,7 @@ export default {
     },
     $_shown () {
       this.touched = false
+      if (this.searchable) this.$refs['dd-light-search'].focus()
       this.$emit('shown')
     },
     $_hidden () {
