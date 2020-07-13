@@ -12,6 +12,7 @@
           button-type="filter"
           searchable
           :search-fields="['content', 'sField']"
+          :unique-key="option => option.optionalData.val"
           :default="['a', 'd', 'c', 'xx']">
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
             ☆ <b>Select Options Options Options {{options.length}}</b>
@@ -157,22 +158,22 @@ export default {
       },
       options: {
         items: [
-          { value: 'a', content: 'A', sField: '$', optionalData: { fn: () => 'testA' } },
-          { value: 'b', content: 'B', sField: '$', optionalData: { fn: () => 'testB' }, disabled: true },
-          { value: 'c', content: 'C', sField: '$', optionalData: { fn: () => 'testC' }, inputType: 'radio', inputName: 'ac' },
-          { value: 'd', content: 'D', sField: '$', optionalData: { fn: () => 'testD' }, inputType: 'radio', inputName: 'ac' },
-          { value: 'e', content: 'E', sField: '$', optionalData: { fn: () => 'testE' }, inputType: 'checkbox' },
-          { value: 'f', content: 'F', sField: '$', optionalData: { fn: () => 'testF' }, inputType: 'checkbox' },
-          { value: 'g', content: 'G', sField: '$', optionalData: { fn: () => 'testG' }, group: 'ts' },
-          { value: 'h', content: 'H', sField: '€', optionalData: { fn: () => 'testH' }, group: 'ts' },
-          { value: 'i', content: 'I', sField: '€', optionalData: { fn: () => 'testI' }, group: 'ts' },
-          { value: 'j', content: 'J', sField: '€', optionalData: { fn: () => 'testJ' }, group: 'tr' },
-          { value: 'xx', content: 'XX', sField: '€', optionalData: { fn: () => 'testXX' }, inputType: 'checkbox' },
-          { value: 'k', content: 'K', sField: '€', optionalData: { fn: () => 'testK' }, group: 'tr' },
-          { value: 'l', content: 'L', sField: '€', optionalData: { fn: () => 'testL' }, group: 'tr' },
-          { value: 'm', content: 'M', sField: 'ALL', optionalData: { fn: () => 'testM' }, group: 'ga' },
-          { value: 'n', content: 'N', sField: 'ALL', optionalData: { fn: () => 'testN' }, group: 'ga' },
-          { value: 'o', content: 'O', sField: 'ALL', optionalData: { fn: () => 'testO' }, group: 'ga' }
+          { value: 'a', content: 'A', sField: '$', optionalData: { fn: () => 'testA', val: 'a' } },
+          { value: 'b', content: 'B', sField: '$', optionalData: { fn: () => 'testB', val: 'b' }, disabled: true },
+          { value: 'c', content: 'C', sField: '$', optionalData: { fn: () => 'testC', val: 'c' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'd', content: 'D', sField: '$', optionalData: { fn: () => 'testD', val: 'd' }, inputType: 'radio', inputName: 'ac' },
+          { value: 'e', content: 'E', sField: '$', optionalData: { fn: () => 'testE', val: 'e' }, inputType: 'checkbox' },
+          { value: 'f', content: 'F', sField: '$', optionalData: { fn: () => 'testF', val: 'f' }, inputType: 'checkbox' },
+          { value: 'g', content: 'G', sField: '$', optionalData: { fn: () => 'testG', val: 'g' }, group: 'ts' },
+          { value: 'h', content: 'H', sField: '€', optionalData: { fn: () => 'testH', val: 'h' }, group: 'ts' },
+          { value: 'i', content: 'I', sField: '€', optionalData: { fn: () => 'testI', val: 'i' }, group: 'ts' },
+          { value: 'j', content: 'J', sField: '€', optionalData: { fn: () => 'testJ', val: 'j' }, group: 'tr' },
+          { value: 'xx', content: 'XX', sField: '€', optionalData: { fn: () => 'testXX', val: 'xx' }, inputType: 'checkbox' },
+          { value: 'k', content: 'K', sField: '€', optionalData: { fn: () => 'testK', val: 'k' }, group: 'tr' },
+          { value: 'l', content: 'L', sField: '€', optionalData: { fn: () => 'testL', val: 'l' }, group: 'tr' },
+          { value: 'm', content: 'M', sField: 'ALL', optionalData: { fn: () => 'testM', val: 'm' }, group: 'ga' },
+          { value: 'n', content: 'N', sField: 'ALL', optionalData: { fn: () => 'testN', val: 'n' }, group: 'ga' },
+          { value: 'o', content: 'O', sField: 'ALL', optionalData: { fn: () => 'testO', val: 'o' }, group: 'ga' }
         ],
         types: [
           {
@@ -286,7 +287,7 @@ export default {
     },
     $_onClick(value) {
       console.log('@click', value)
-    },
+    }
   }
 }
 </script>

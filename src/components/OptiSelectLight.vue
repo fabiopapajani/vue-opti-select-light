@@ -126,6 +126,7 @@ export default {
       this.groups.forEach(group => { options.groupsMap[group.value] = group })
       this.options.forEach(_option => {
         const key = this.$_optionKey(_option)
+        // console.log(typeof this.uniqueKey, _option, key)
         options.map[key] = _option
       })
       return options
@@ -249,12 +250,10 @@ export default {
       this.$_emit()
     },
     $_optionKey (option) {
-      const key = typeof this.uniqueKey === 'function' ? this.uniqueKey(option) : this.uniqueKey
-      return option[key]
+      return typeof this.uniqueKey === 'function' ? this.uniqueKey(option) : option[this.uniqueKey]
     },
     $_optionLabel (option) {
-      const key = typeof this.labelKey === 'function' ? this.labelKey(option) : this.labelKey
-      return option[key]
+      return typeof this.labelKey === 'function' ? this.labelKey(option) : option[this.labelKey]
     },
     $_slot (key) {
       return !!this.$slots[key] || !!this.$scopedSlots[key]
