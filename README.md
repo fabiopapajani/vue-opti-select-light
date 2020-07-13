@@ -25,10 +25,10 @@ npm run lint
 | default | [Array of keys] |
 | selectFirst | Boolean default => FALSE |
 | options | [Array of object] |
-| uniqueKey | String OR Function(option) => "String" |
-| labelKey | String OR Function(option) => "String" |
+| uniqueKey | String OR Function(option) => "String", Default "value" |
+| labelKey | String OR Function(option) => "String", Default "content" |
 | searchable | Boolean default => FALSE |
-| searchFields | [Array or Function],  Default ['content'] |
+| searchFields | [Array or Function],  Default [labelKey] |
 | searchPlaceholder | String default "Search..." |
 | searchNoResultsPlaceholder | String default "No results found..." |
 | groups | [Array of object] |

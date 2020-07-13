@@ -77,7 +77,7 @@ export default {
     uniqueKey: { type: [String, Function], default: 'value' },
     labelKey: { type: [String, Function], default: 'content' },
     searchable: { type: Boolean, default: false },
-    searchFields: { type: [Array, Function], default: () => ['content'] },
+    searchFields: { type: [Array, Function, null], default: () => null },
     searchPlaceholder: { type: String, default: 'Search...' },
     searchNoResultsPlaceholder: { type: String, default: 'No results found...' },
     groups: { type: Array, default: () => [] }, // Groups options
@@ -317,15 +317,17 @@ export default {
     },
     $_getSearchPattern (option, group) {
       if (this.searchable) {
+        // Set default LabelKey if not defined
+        const searchFields = this.searchFields ||  (typeof this.labelKey === 'function' ? this.labelKey: [this.labelKey] )
         let values = []
-        if (Array.isArray(this.searchFields)) {
-          this.searchFields.forEach(_key => {
+        if (Array.isArray(searchFields)) {
+          searchFields.forEach(_key => {
             try {
               values.push(option[_key])
             } catch (err) { /** DO NOTHING */ }
           })
         } else {
-          values = this.searchFields(option)
+          values = searchFields(option)
         }
         // Make group searchable
         if (group && group.content) values.push(group.content)
