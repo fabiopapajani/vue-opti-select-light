@@ -90,6 +90,7 @@ export default {
     buttonPlaceholder: { type: String, default: 'Select Option' },
     buttonPlaceholderAllSelected: { type: String, default: '' },
     buttonPlaceholderMultiple: { type: Function, default: ({ count, suffix }) => `${count} item${suffix} selected` },
+    single: { type: Boolean, default: false },
     lazy: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
   },
@@ -102,12 +103,14 @@ export default {
     }
   },
   created () {
+    // Single select support v-model
+    const value = this.single ? [this.value] : this.value
     if (this.default.length) {
       // Set Default Values
       this.add(this.default)
-    } else if (this.value.length) {
+    } else if (value.length) {
       // Set Default from v-model
-      this.value.forEach(option => {
+      value.forEach(option => {
         const key = this.$_optionKey(option)
         if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
       })
@@ -269,7 +272,8 @@ export default {
       if (this.emitOnClick) this.$_emit()
     },
     $_setItem (option, trigger = false) {
-      if (!option.inputType) {
+      if (this.single || !option.inputType) {
+        // If not define type or single select
         this.selected = {}
         this.$set(this.selected, option.private.key, true)
         this.selectedMap = {}
@@ -298,7 +302,8 @@ export default {
       return false
     },
     $_emit () {
-      this.$emit('input', this.$c_model)
+      const data = this.single ? this.$c_model[0] : this.$c_model
+      this.$emit('input', data)
     },
     $_shown () {
       this.touched = false
@@ -306,7 +311,8 @@ export default {
     },
     $_hidden () {
       if (!this.emitOnClick && this.touched) this.$_emit()
-      if (this.touched) this.$emit('change', this.$c_model)
+      const data = this.single ? this.$c_model[0] : this.$c_model
+      if (this.touched) this.$emit('change', data)
       if (this.searchModel) this.searchModel = ''
       this.$emit('hidden')
     },

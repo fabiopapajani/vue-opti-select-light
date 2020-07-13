@@ -89,6 +89,45 @@
         </vue-opti-select-light>
         <pre v-if="models.typesMultiSelect">{{models.typesMultiSelect}}</pre>
       </div>
+      <div class="col-md-3">
+        <h4>Types multi select tag</h4>
+        <vue-opti-select-light 
+          ref="selectTag"
+          unique-key="id"
+          label-key="name"
+          v-model="models.tagMultiSelect"
+          :options="options.types"
+          option-type="checkbox"
+          button-placeholder="Select accounts"
+          button-type="tag"
+          :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          @change="$_onChange"
+          @click="$_onClick"
+          select-first
+          button-block>
+        </vue-opti-select-light>
+        <pre v-if="models.typesMultiSelect">{{models.tagMultiSelect}}</pre>
+      </div>
+      <div class="col-md-3">
+        <h4>Single select</h4>
+        <vue-opti-select-light 
+          ref="sigleSelect"
+          unique-key="id"
+          label-key="name"
+          v-model="models.singleSelect"
+          :options="options.types"
+          option-type="checkbox"
+          button-placeholder="Select accounts"
+          button-type="tag"
+          :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          @change="$_onChange"
+          @click="$_onClick"
+          select-first
+          single
+          button-block>
+        </vue-opti-select-light>
+        <pre v-if="models.typesMultiSelect">{{models.singleSelect}}</pre>
+      </div>
     </div>
     
   </div>
@@ -112,7 +151,9 @@ export default {
       models: {
         simpleSelect: null,
         typesSelect: [],
-        typesMultiSelect: []
+        typesMultiSelect: [],
+        tagMultiSelect: [],
+        singleSelect: null
       },
       options: {
         items: [
@@ -134,51 +175,51 @@ export default {
           { value: 'o', content: 'O', sField: 'ALL', optionalData: { fn: () => 'testO' }, group: 'ga' }
         ],
         types: [
-          // {
-          //     "id":6,
-          //     "name":"RevContent",
-          //     "timezone":"America/New_York",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"RevContent"
-          // },
-          // {
-          //     "id":7,
-          //     "name":"Taboola",
-          //     "timezone":"America/New_York",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"Taboola"
-          // },
-          // {
-          //     "id":8,
-          //     "name":"ContentAd",
-          //     "timezone":"America/Los_Angeles",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"ContentAd"
-          // },
-          // {
-          //     "id":9,
-          //     "name":"Mgid",
-          //     "timezone":"America/Los_Angeles",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"Mgid"
-          // },
-          // {
-          //     "id":13,
-          //     "name":"Outbrain",
-          //     "timezone":"America/New_York",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"Outbrain"
-          // },
+          {
+              "id":6,
+              "name":"RevContent",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"RevContent"
+          },
+          {
+              "id":7,
+              "name":"Taboola",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Taboola"
+          },
+          {
+              "id":8,
+              "name":"ContentAd",
+              "timezone":"America/Los_Angeles",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"ContentAd"
+          },
+          {
+              "id":9,
+              "name":"Mgid",
+              "timezone":"America/Los_Angeles",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Mgid"
+          },
+          {
+              "id":13,
+              "name":"Outbrain",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Outbrain"
+          },
           {
               "id":14,
               "name":"Adskeeper",
@@ -188,42 +229,42 @@ export default {
               "updated_at":"2020-01-23T10:18:24.610Z",
               "uniqueName":"Adskeeper"
           },
-          // {
-          //     "id":15,
-          //     "name":"Yahoo Gemini",
-          //     "timezone":"UTC",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"Gemini"
-          // },
-          // {
-          //     "id":21,
-          //     "name":"VoluumDSP",
-          //     "timezone":"America/New_York",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"VoluumDSP"
-          // },
-          // {
-          //     "id":23,
-          //     "name":"Runative",
-          //     "timezone":"UTC",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"Runative"
-          // },
-          // {
-          //     "id":24,
-          //     "name":"ActiveRevenue (beta)",
-          //     "timezone":"UTC",
-          //     "platform":"native",
-          //     "created_at":"2020-01-23T10:18:24.610Z",
-          //     "updated_at":"2020-01-23T10:18:24.610Z",
-          //     "uniqueName":"ActiveRevenue"
-          // }
+          {
+              "id":15,
+              "name":"Yahoo Gemini",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Gemini"
+          },
+          {
+              "id":21,
+              "name":"VoluumDSP",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"VoluumDSP"
+          },
+          {
+              "id":23,
+              "name":"Runative",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"Runative"
+          },
+          {
+              "id":24,
+              "name":"ActiveRevenue (beta)",
+              "timezone":"UTC",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"ActiveRevenue"
+          }
         ]
       },
       groups: [

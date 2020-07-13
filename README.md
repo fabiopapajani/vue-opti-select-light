@@ -41,6 +41,7 @@ npm run lint
 | buttonPlaceholder | String default "Select Option" |
 | buttonPlaceholderAllSelected | String default "" |
 | buttonPlaceholderMultiple | Function({ count, suffix })  => `${count} item${suffix} selected` |
+| single | Boolean default => FALSE |
 | lazy | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |
 
