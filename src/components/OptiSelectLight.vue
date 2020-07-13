@@ -70,7 +70,7 @@
 export default {
   name: 'vue-opti-select-light',
   props: {
-    value: { type: Array, default: () => [] },
+    value: { type: [Array, Object, null], default: () => [] },
     default: { type: Array, default: () => [] },
     selectFirst: { type: Boolean, default: false },
     options: { type: Array, default: () => [] },
@@ -104,7 +104,7 @@ export default {
   },
   created () {
     // Single select support v-model
-    const value = this.single ? [this.value] : this.value
+    const value = this.single ? this.value ? [this.value] : [] : this.value
     if (this.default.length) {
       // Set Default Values
       this.add(this.default)
