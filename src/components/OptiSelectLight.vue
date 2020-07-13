@@ -126,7 +126,6 @@ export default {
       this.groups.forEach(group => { options.groupsMap[group.value] = group })
       this.options.forEach(_option => {
         const key = this.$_optionKey(_option)
-        // console.log(typeof this.uniqueKey, _option, key)
         options.map[key] = _option
       })
       return options
