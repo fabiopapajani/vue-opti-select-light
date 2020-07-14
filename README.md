@@ -66,6 +66,7 @@ npm run lint
 | Name | Description |
 | ------ | ------ |
 | @input | Function([Array]) |
+| @update | Function([Array]), Exec when updated from v-model |
 | @click | Function({Object}, Boolean) |
 | @change | Function([Array]), Exec when hidden |
 | @shown | Dropdown shown |

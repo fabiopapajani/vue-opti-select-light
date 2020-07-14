@@ -307,7 +307,7 @@ export default {
     $_emit () {
       const data = this.$_getModelPayload()
       this.modelHash = this.$_hashModel(data);
-      this.$emit('input', data)
+      this.$emit('input', data);
     },
     $_shown () {
       this.touched = false
@@ -359,8 +359,9 @@ export default {
           if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
         })
         // Update Model Hash
-        const data = this.$_getModelPayload()
+        const data = this.$_getModelPayload();
         this.modelHash = this.$_hashModel(data);
+        this.$emit('update', data);
       }
     },
     $_hashModel (val) {
