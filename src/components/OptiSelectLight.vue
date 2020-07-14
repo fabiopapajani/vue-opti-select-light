@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import hash from 'object-hash';
 
 export default {
   name: 'vue-opti-select-light',
@@ -99,7 +100,8 @@ export default {
       selected: {}, // Internal usage
       selectedMap: {}, // Mapped Internal model
       searchModel: '',
-      touched: false // True when has touched (has changes)
+      touched: false, // True when has touched (has changes)
+      modelHash: null
     }
   },
   created () {
@@ -110,15 +112,16 @@ export default {
       this.add(this.default)
     } else if (value.length) {
       // Set Default from v-model
-      value.forEach(option => {
-        const key = this.$_optionKey(option)
-        if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
-      })
+      this.$_setFromVModel(this.value)
     } else if (this.selectFirst) {
       // Set Default Firs Option
       const key = this.$_optionKey(this.$c_options.array[0])
       this.add(key)
     }
+    // Smart Watch v-model change
+    this.$watch('value', (val) => {
+      this.$_setFromVModel(val)
+    })
   },
   computed: {
     $c_options () {
@@ -299,9 +302,10 @@ export default {
       event.stopImmediatePropagation()
       return false
     },
-    $_emit () {
+    $_emit (emit = true) {
       const data = this.single ? this.$c_model[0] : this.$c_model
-      this.$emit('input', data)
+      this.modelHash = hash.MD5(data);
+      if (emit) this.$emit('input', data)
     },
     $_shown () {
       this.touched = false
@@ -338,6 +342,23 @@ export default {
     },
     $_clearSearch () {
       this.searchModel = ''
+    },
+    $_setFromVModel (val) {
+      const valueMd5 = hash.MD5(val);
+      // v-model change from outside
+      if (valueMd5 !== this.modelHash) {
+        // Clear
+        this.selected = {}
+        this.selectedMap = {}
+        // Set from v-model
+        const value = this.single ? val ? [val] : [] : val
+        value.forEach(option => {
+          const key = this.$_optionKey(option)
+          if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
+        })
+        // Update Model Hash
+        this.$_emit(false);
+      }
     }
   }
 }
