@@ -105,8 +105,10 @@ export default {
     }
   },
   created () {
+    // Set empty hash
+    this.modelHash = this.$_hashModel()
     // Single select support v-model
-    const value = this.single ? this.value ? [this.value] : [] : this.value
+    const value = this.$_getValuePayload(this.value)
     if (this.default.length) {
       // Set Default Values
       this.add(this.default)
@@ -302,10 +304,10 @@ export default {
       event.stopImmediatePropagation()
       return false
     },
-    $_emit (emit = true) {
-      const data = this.single ? this.$c_model[0] : this.$c_model
-      this.modelHash = hash.MD5(data);
-      if (emit) this.$emit('input', data)
+    $_emit () {
+      const data = this.$_getModelPayload()
+      this.modelHash = this.$_hashModel(data);
+      this.$emit('input', data)
     },
     $_shown () {
       this.touched = false
@@ -314,7 +316,7 @@ export default {
     },
     $_hidden () {
       if (!this.emitOnClick && this.touched) this.$_emit()
-      const data = this.single ? this.$c_model[0] : this.$c_model
+      const data = this.$_getModelPayload()
       if (this.touched) this.$emit('change', data)
       if (this.searchModel) this.searchModel = ''
       this.$emit('hidden')
@@ -344,21 +346,35 @@ export default {
       this.searchModel = ''
     },
     $_setFromVModel (val) {
-      const valueMd5 = hash.MD5(val);
+      const valueMd5 = this.$_hashModel(val);
       // v-model change from outside
       if (valueMd5 !== this.modelHash) {
         // Clear
         this.selected = {}
         this.selectedMap = {}
         // Set from v-model
-        const value = this.single ? val ? [val] : [] : val
+        const value = this.$_getValuePayload(val)
         value.forEach(option => {
           const key = this.$_optionKey(option)
           if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
         })
         // Update Model Hash
-        this.$_emit(false);
+        const data = this.$_getModelPayload()
+        this.modelHash = this.$_hashModel(data);
       }
+    },
+    $_hashModel (val) {
+      // Map null or undefined value as [] hash
+      return hash.MD5(val || [])
+    },
+    $_getModelPayload () {
+      return this.single ? this.$c_model[0] || null : this.$c_model
+    },
+    $_getValuePayload (val) {
+      // Map null or {} as [] or [{}]
+      let value = val || []
+      if (!Array.isArray(value)) value = [value]
+      return value
     }
   }
 }
