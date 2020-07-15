@@ -44,6 +44,7 @@ npm run lint
 | single | Boolean default => FALSE |
 | lazy | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |
+| disabled | Boolean default => FALSE |
 
 ### Slots
 | Name | Description |

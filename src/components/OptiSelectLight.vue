@@ -1,6 +1,6 @@
 <template>
-  <div :class="[{ 'empty': $c_model.length === 0, 'allSelected': $c_allSelected }, 'vue-opti-select-light']">
-    <b-dd :lazy="lazy" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
+  <div :class="[{ 'empty': $c_model.length === 0, 'allSelected': $c_allSelected, 'disabled': disabled }, 'vue-opti-select-light']">
+    <b-dd :lazy="lazy" :disabled="disabled" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
       <template #button-content>
         <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model" :allSelected="$c_allSelected"></slot>
         <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
@@ -94,6 +94,7 @@ export default {
     single: { type: Boolean, default: false },
     lazy: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
   },
   data () {
     return {
