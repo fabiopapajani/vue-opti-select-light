@@ -71,8 +71,8 @@ import hash from 'object-hash';
 export default {
   name: 'vue-opti-select-light',
   props: {
-    value: { type: [Array, Object, null], default: () => [] },
-    default: { type: Array, default: () => [] },
+    valueModel: { type: [Array, Object, null], default: () => [] },
+    value: { default: () => [] },
     selectFirst: { type: Boolean, default: false },
     options: { type: Array, default: () => [] },
     uniqueKey: { type: [String, Function], default: 'value' },
@@ -96,35 +96,57 @@ export default {
     emitOnClick: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
   },
+  model: {
+    prop: 'valueModel',
+    event: 'input',
+  },
   data () {
     return {
       selected: {}, // Internal usage
       selectedMap: {}, // Mapped Internal model
       searchModel: '',
       touched: false, // True when has touched (has changes)
-      modelHash: null
+      modelHash: null,
+      valueHash: null
     }
   },
   created () {
-    // Set empty hash
+    /*********** Set Default Hash ***********/
     this.modelHash = this.$_hashModel()
+    this.valueHash = hash.MD5(this.value);
+    /****************************************/
+
+    /********** Set Default Values **********/
     // Single select support v-model
-    const value = this.$_getValuePayload(this.value)
-    if (this.default.length) {
-      // Set Default Values
-      this.add(this.default)
-    } else if (value.length) {
-      // Set Default from v-model
-      this.$_setFromVModel(this.value)
+    const model = this.$_getValueModelPayload(this.valueModel)
+    if (this.value.length) {
+      // Set Default From Values
+      this.add(this.value)
+    } else if (model.length) {
+      // Set Default From v-model
+      this.$_setFromModel(this.valueModel)
     } else if (this.selectFirst) {
-      // Set Default Firs Option
+      // Set Default First Option
       const key = this.$_optionKey(this.$c_options.array[0])
       this.add(key)
     }
+    /****************************************/
+
+    /************ Value Watchers ************/
     // Smart Watch v-model change
-    this.$watch('value', (val) => {
-      this.$_setFromVModel(val)
+    this.$watch('valueModel', (val) => {
+      this.$_setFromModel(val)
     })
+    // Smart Watch value change
+    this.$watch('value', (val) => {
+      const valueHash = hash.MD5(val);
+      if (valueHash !== this.valueHash) {
+        this.valueHash = valueHash;
+        this.$_clear()
+        this.add(val)
+      }
+    })
+    /****************************************/
   },
   computed: {
     $c_options () {
@@ -250,9 +272,12 @@ export default {
       }
     },
     clear () {
+      this.$_clear()
+      this.$_emit()
+    },
+    $_clear () {
       this.selected = {}
       this.selectedMap = {}
-      this.$_emit()
     },
     $_optionKey (option) {
       return typeof this.uniqueKey === 'function' ? this.uniqueKey(option) : option[this.uniqueKey]
@@ -346,15 +371,14 @@ export default {
     $_clearSearch () {
       this.searchModel = ''
     },
-    $_setFromVModel (val) {
+    $_setFromModel (val) {
       const valueMd5 = this.$_hashModel(val);
       // v-model change from outside
       if (valueMd5 !== this.modelHash) {
         // Clear
-        this.selected = {}
-        this.selectedMap = {}
+        this.$_clear()
         // Set from v-model
-        const value = this.$_getValuePayload(val)
+        const value = this.$_getValueModelPayload(val)
         value.forEach(option => {
           const key = this.$_optionKey(option)
           if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
@@ -372,7 +396,7 @@ export default {
     $_getModelPayload () {
       return this.single ? this.$c_model[0] || null : this.$c_model
     },
-    $_getValuePayload (val) {
+    $_getValueModelPayload (val) {
       // Map null or {} as [] or [{}]
       let value = val || []
       if (!Array.isArray(value)) value = [value]

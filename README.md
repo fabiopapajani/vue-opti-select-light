@@ -22,7 +22,7 @@ npm run lint
 ### Props
 | Name | Description |
 | ------ | ------ |
-| default | [Array of keys] |
+| value | Key or [Array of keys] |
 | selectFirst | Boolean default => FALSE |
 | options | [Array of object] |
 | uniqueKey | String OR Function(option) => "String", Default "value" |

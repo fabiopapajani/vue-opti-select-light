@@ -13,7 +13,7 @@
           searchable
           :search-fields="['content', 'sField']"
           :unique-key="option => option.optionalData.val"
-          :default="['a', 'd', 'c', 'xx']">
+          :value="values">
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
             ☆ <b>Select Options Options Options {{options.length}}</b>
           </template> -->
@@ -273,7 +273,8 @@ export default {
         { value: 'tr', content: 'Trackers', inputType: 'radio' },
         { value: 'ga', content: 'Google Analytics' },
         { value: 'other', content: 'Other' }
-      ]
+      ],
+      values: ['a', 'k', 'c', 'xx']
     }
   },
   created () {
