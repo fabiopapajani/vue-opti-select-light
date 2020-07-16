@@ -79,3 +79,30 @@ npm run lint
 | add() | Function(String or [Array of keys]) |
 | remove() | Function(String or [Array of keys]) |
 | clear() | |
+
+### vee-validate 2.*
+| Prop | Description |
+| ------ | ------ |
+| data-vv-value-path | "$c_model" (optional)|
+| data-vv-validate-on | "input\|update"|
+
+```javascript
+// Example vee-validate 2.*
+<vue-opti-select-light
+  :class="[{ 'has-error': $_hasError('field3') === false }, 'w-100']"
+  data-vv-as="Campaign Type"
+  v-validate="'required'"
+  data-vv-validate-on="input|update"
+  data-vv-value-path="$c_model"
+  name="field3"
+  :value="row.field3 && row.field3.to && row.field3.to.value ? row.field3.to.value.key : null"
+  @change="(option) => { row.field3.to = option; $_changeFieldTo(row, item); }"
+  :options="$c_fieldsToOptions"
+  :groups="optionsData.fieldsGroup"
+  :unique-key="option => option.value.key"
+  label-key="text"
+  single
+  searchable
+  button-block
+/>
+ ```
