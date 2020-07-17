@@ -119,8 +119,7 @@ export default {
     /********** Set Default Values **********/
     // Single select support v-model
     const model = this.$_getValueModelPayload(this.valueModel)
-    const valueArray = Array.isArray(this.value) ? this.value : [this.value]
-    if (valueArray.length) {
+    if (typeof this.value !== 'undefined' && !(Array.isArray(this.value) && this.value.length === 0)) {
       // Set Default From Values
       this.add(this.value)
     } else if (model.length) {
@@ -248,7 +247,7 @@ export default {
   },
   methods: {
     add (value) {
-      if (value) {
+      if (typeof value !== 'undefined') {
         const keys = Array.isArray(value) ? value : [value]
         keys.forEach(key => {
           if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
