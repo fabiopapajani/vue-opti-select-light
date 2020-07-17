@@ -119,7 +119,8 @@ export default {
     /********** Set Default Values **********/
     // Single select support v-model
     const model = this.$_getValueModelPayload(this.valueModel)
-    if (this.value.length) {
+    const valueArray = Array.isArray(this.value) ? this.value : [this.value]
+    if (valueArray.length) {
       // Set Default From Values
       this.add(this.value)
     } else if (model.length) {
