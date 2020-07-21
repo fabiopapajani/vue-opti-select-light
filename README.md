@@ -49,7 +49,7 @@ npm run lint
 ### Slots
 | Name | Description |
 | ------ | ------ |
-| BUTTON_PLACEHOLDER | slot-scope="{ options }" |
+| BUTTON_PLACEHOLDER | slot-scope="{ options, option }" |
 | HEADER | |
 | HEADER_2 | Slot after search |
 | FOOTER | |
