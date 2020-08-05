@@ -338,7 +338,7 @@ export default {
     },
     $_selectItem (option) {
       this.$_setItem(option, true)
-      if (!option.inputType) this.$refs['dd-light'].hide() // Close Dropdown on select
+      if (!option.inputType && this.$refs['dd-light']) this.$refs['dd-light'].hide() // Close Dropdown on select
       if (!this.touched) this.touched = true
       if (this.emitOnClick) this.$_emit()
     },
