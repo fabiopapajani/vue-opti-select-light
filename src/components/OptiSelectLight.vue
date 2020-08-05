@@ -21,8 +21,8 @@
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <b-dd-header v-if="searchable" class="search-container">
-        <input ref="dd-light-search" type="text" v-model="searchModel" :placeholder="searchPlaceholder" />
-        <span v-show="searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
+        <input ref="dd-light-search" type="text" v-model="$c_searchModel" :placeholder="searchPlaceholder" />
+        <span v-show="$c_searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
       <div class="options-list">
@@ -56,7 +56,7 @@
           </component>
         </template>
       </div>
-      <template v-if="searchModel.length && $c_localSearchableOptions.length === 0">
+      <template v-if="$c_searchModel.length && $c_localSearchableOptions.length === 0">
         <slot v-if="$_slot('SEARCH_NO_RESULTS')" name="SEARCH_NO_RESULTS"></slot>
         <div v-else class="search-no-results" v-html="searchNoResultsPlaceholder"></div>
       </template>
@@ -67,6 +67,7 @@
 
 <script>
 import hash from 'object-hash';
+import _ from 'lodash';
 
 export default {
   name: 'vue-opti-select-light',
@@ -81,6 +82,8 @@ export default {
     searchFields: { type: [Array, Function, null], default: () => null },
     searchPlaceholder: { type: String, default: 'Search...' },
     searchNoResultsPlaceholder: { type: String, default: 'No results found...' },
+    debounce: { type: Boolean, default: false },
+    debounceValue: { type: Number, default: 250 },
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
     buttonType: { type: String, default: 'placeholder' },
@@ -146,6 +149,32 @@ export default {
         this.add(val)
       }
     })
+    /****************************************/
+
+    /*********** Debounced Search ***********/
+    if (this.debounce) {
+      this.$options.debounceSetSearchFunction = _.debounce((value) => {
+        this.searchModel = value
+      }, this.debounceValue)
+    }
+    /****************************************/
+  },
+  mounted () {
+    /**** Observe Dropdown Menu Height ******/
+    const dd = this.$refs['dd-light'];
+    const ddMenuEl = dd.$el.getElementsByClassName('dropdown-menu')[0];
+    const ddMenuObservator = new ResizeObserver(entries => {
+      const [ddMenu] = entries;
+      if (ddMenu && ddMenu.target) {
+        const isHidden = ddMenu.target.offsetParent === null;
+        if (!isHidden) {
+          // Update b-dd Popper.js
+          dd.updatePopper();
+          // console.log('Update Popper.js');
+        }
+      }
+    });
+    ddMenuObservator.observe(ddMenuEl);
     /****************************************/
   },
   computed: {
@@ -214,7 +243,7 @@ export default {
       return computedOptions
     },
     $c_localSearchableOptions () {
-      const searchValue = this.searchModel.trim().toLowerCase()
+      const searchValue = this.$c_searchModel.trim().toLowerCase()
       if (this.searchable && searchValue) {
         const options = []
         this.$c_localOptions.array.forEach(item => {
@@ -244,6 +273,19 @@ export default {
     $c_allSelected () {
       return this.$c_model.length === this.$c_options.array.length
     },
+    $c_searchModel: {
+      get () {
+        return this.searchModel
+      },
+      set (value) {
+        if (this.$options.debounceSetSearchFunction) {
+          // Debounce set value
+          this.$options.debounceSetSearchFunction(value)
+        } else {
+          this.searchModel = value
+        }
+      }
+    }
   },
   methods: {
     add (value) {

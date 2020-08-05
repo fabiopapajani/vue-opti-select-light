@@ -31,6 +31,8 @@ npm run lint
 | searchFields | [Array or Function],  Default [labelKey] |
 | searchPlaceholder | String default "Search..." |
 | searchNoResultsPlaceholder | String default "No results found..." |
+| debounce | Boolean default => FALSE (Search debounce) |
+| debounceValue | Number default 250ms |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
 | buttonType | String default "placeholder", options => "filter", "static" |

@@ -1,46 +1,7 @@
 <template>
   <div class="container mt-2">
     <div class="row">
-      <div class="col-md-3">
-        <h4>Simple single select</h4>
-        <vue-opti-select-light 
-          ref="select"
-          v-model="models.simpleSelect"
-          :options="options.items"
-          :groups="groups"
-          button-placeholder="Select"
-          button-type="filter"
-          searchable
-          :search-fields="['content', 'sField']"
-          :unique-key="option => option.optionalData.val"
-          :value="values">
-          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
-            ☆ <b>Select Options Options Options {{options.length}}</b>
-          </template> -->
-          <!-- <template #ITEM="{ option }">
-            <a target="_blank" href="https://google.com">{{option.content}}</a>
-          </template> -->
-          <template #GROUP="{ group }">
-            • {{ group.content }}
-          </template>
-          <template #GROUP_tr="{ group }">
-            ⎔ {{ group.content }}
-          </template>
-          <template #ITEM_h="{ option }">
-            {{ option.content }}
-          </template>
-          <template #ITEM_AFTER_h>
-            <b-dd-divider />
-          </template>
-          <template #HEADER>
-            <b-dd-header>:)</b-dd-header>
-          </template>
-          <template #FOOTER>
-            <b-dd-header>Footer</b-dd-header>
-          </template>
-        </vue-opti-select-light>
-        <pre v-if="models.simpleSelect">{{models.simpleSelect}}</pre>
-      </div>
+      
       <div class="col-md-3">
         <h4>Types single select</h4>
         <vue-opti-select-light 
@@ -125,9 +86,51 @@
           @click="$_onClick"
           select-first
           single
+          searchable
           button-block>
         </vue-opti-select-light>
         <pre v-if="models.typesMultiSelect">{{models.singleSelect}}</pre>
+      </div>
+      <div class="col-md-3">
+        <h4>Simple single select</h4>
+        <vue-opti-select-light 
+          ref="select"
+          v-model="models.simpleSelect"
+          :options="options.items"
+          :groups="groups"
+          button-placeholder="Select"
+          button-type="filter"
+          searchable
+          :search-fields="['content', 'sField']"
+          :unique-key="option => option.optionalData.val"
+          debounce
+          :value="values">
+          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
+            ☆ <b>Select Options Options Options {{options.length}}</b>
+          </template> -->
+          <!-- <template #ITEM="{ option }">
+            <a target="_blank" href="https://google.com">{{option.content}}</a>
+          </template> -->
+          <template #GROUP="{ group }">
+            • {{ group.content }}
+          </template>
+          <template #GROUP_tr="{ group }">
+            ⎔ {{ group.content }}
+          </template>
+          <template #ITEM_h="{ option }">
+            {{ option.content }}
+          </template>
+          <template #ITEM_AFTER_h>
+            <b-dd-divider />
+          </template>
+          <template #HEADER>
+            <b-dd-header>:)</b-dd-header>
+          </template>
+          <template #FOOTER>
+            <b-dd-header>Footer</b-dd-header>
+          </template>
+        </vue-opti-select-light>
+        <pre v-if="models.simpleSelect">{{models.simpleSelect}}</pre>
       </div>
     </div>
     
