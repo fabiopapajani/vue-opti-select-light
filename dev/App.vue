@@ -10,7 +10,8 @@
           label-key="name"
           v-model="models.typesSelect"
           :options="options.types"
-          button-block>
+          button-block
+          prevent>
           <!-- <template #BUTTON_PLACEHOLDER="{ options }">
             ☆ <b>Select Options Options Options {{options.length}}</b>
           </template> -->

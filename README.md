@@ -47,6 +47,7 @@ npm run lint
 | lazy | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |
 | disabled | Boolean default => FALSE |
+| prevent | Boolean default => FALSE (Prevent from selecting) |
 
 ### Slots
 | Name | Description |

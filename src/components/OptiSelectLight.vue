@@ -98,6 +98,7 @@ export default {
     lazy: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
+    prevent: { type: Boolean, default: false },
   },
   model: {
     prop: 'valueModel',
@@ -337,10 +338,14 @@ export default {
       return this.$c_options.map[key]
     },
     $_selectItem (option) {
-      this.$_setItem(option, true)
+      if (!this.prevent) this.$_setItem(option, true)
       if (!option.inputType && this.$refs['dd-light']) this.$refs['dd-light'].hide() // Close Dropdown on select
-      if (!this.touched) this.touched = true
-      if (this.emitOnClick) this.$_emit()
+      if (!this.prevent) {
+        if (!this.touched) this.touched = true
+        if (this.emitOnClick) this.$_emit()
+      } else {
+        this.$emit('click', this.$_originalOption(option.private.key), true)
+      }
     },
     $_setItem (option, trigger = false) {
       if (this.single || !option.inputType) {
