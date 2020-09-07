@@ -66,8 +66,16 @@
           :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
           @change="$_onChange"
           @click="$_onClick"
+          :tag-limit="5"
           select-first
           button-block>
+          <!-- <template #TAG="{ option, remove }">
+            <span class="name p-2">{{ option.name }}</span>
+            <span class="remove p-2" @click.stop="remove()">x</span>
+          </template> -->
+          <!-- <template #TAG_LABEL="{ option }">
+            --{{option.name}}
+          </template> -->
         </vue-opti-select-light>
         <pre v-if="models.typesMultiSelect">{{models.tagMultiSelect}}</pre>
       </div>
@@ -93,14 +101,14 @@
         <pre v-if="models.typesMultiSelect">{{models.singleSelect}}</pre>
       </div>
       <div class="col-md-3">
-        <h4>Simple single select</h4>
+        <h4>Simple multi select</h4>
         <vue-opti-select-light 
           ref="select"
           v-model="models.simpleSelect"
           :options="options.items"
           :groups="groups"
           button-placeholder="Select"
-          button-type="filter"
+          button-type="tag"
           searchable
           :search-fields="['content', 'sField']"
           :unique-key="option => option.optionalData.val"

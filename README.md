@@ -35,7 +35,8 @@ npm run lint
 | debounceValue | Number default 250ms |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
-| buttonType | String default "placeholder", options => "filter", "static" |
+| buttonType | String default "placeholder", options => "filter", "static", "tag" |
+| tagLimit | Number default => 50 ( Used when buttonType is "tag" )|
 | buttonNoCaret | Boolean default => FALSE |
 | buttonBlock | Boolean default => FALSE |
 | buttonSize | String default => "sm" |
@@ -53,6 +54,8 @@ npm run lint
 | Name | Description |
 | ------ | ------ |
 | BUTTON_PLACEHOLDER | slot-scope="{ options, option }" |
+| TAG | slot-scope="{ option, remove }" |
+| TAG_LABEL | slot-scope="{ option }" |
 | HEADER | |
 | HEADER_2 | Slot after search |
 | FOOTER | |

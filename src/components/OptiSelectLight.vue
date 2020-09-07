@@ -1,10 +1,28 @@
 <template>
   <div :class="[{ 'empty': $c_model.length === 0, 'allSelected': $c_allSelected, 'disabled': disabled }, 'vue-opti-select-light']">
-    <b-dd :lazy="lazy" :disabled="disabled" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden">
+    <b-dd :lazy="lazy" :disabled="disabled" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden" :class="`btn-type-${buttonType}`">
       <template #button-content>
         <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model" :option="single ? $c_model[0] || null : null" :allSelected="$c_allSelected"></slot>
         <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
           <i class="fa fa-filter"></i><b-badge v-show="$c_model.length" pill variant="info">{{$c_model.length}}</b-badge>
+        </span>
+        <span v-else-if="buttonType === 'tag' && $c_modelTag.length" class="button-placehoder-tag">
+          <template v-for="(option) in $c_modelTag">
+            <slot v-if="$_slot('TAG')" name="TAG" :option="option" :remove="() => remove($_optionKey(option))"></slot>
+            <span v-else :key="`tag-${$_optionKey(option)}`" class="tag-item">
+              <span class="tag-name p-2" v-if="$_slot('TAG_LABEL')">
+                <slot name="TAG_LABEL" :option="option"></slot>
+              </span>
+              <span v-else class="tag-name p-2" v-html="$_optionLabel(option)"></span>
+              <span class="tag-remove p-1" @click.stop="remove($_optionKey(option))" title="Remove">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/><path d="M9 1L1 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </span>
+          </template>
+          <template v-if="$c_model.length > tagLimit">
+            <span class="tag-toggle show-all" v-if="$c_model.length > $c_modelTag.length" @click.stop="showAllTags = true">Show all ({{ $c_model.length - tagLimit }} more)</span>
+            <span class="tag-toggle show-less" v-else  @click.stop="showAllTags = false">Show less</span>
+          </template>
         </span>
         <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
         <span v-else-if="buttonPlaceholderAllSelected && $c_allSelected && $c_model.length > 1" v-html="buttonPlaceholderAllSelected"></span>
@@ -87,6 +105,7 @@ export default {
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
     buttonType: { type: String, default: 'placeholder' },
+    tagLimit: { type: Number, default: 50 },
     buttonNoCaret: { type: Boolean, default: false },
     buttonBlock: { type: Boolean, default: false },
     buttonSize: { type: String, default: 'sm' },
@@ -99,6 +118,7 @@ export default {
     emitOnClick: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     prevent: { type: Boolean, default: false },
+    
   },
   model: {
     prop: 'valueModel',
@@ -111,7 +131,8 @@ export default {
       searchModel: '',
       touched: false, // True when has touched (has changes)
       modelHash: null,
-      valueHash: null
+      valueHash: null,
+      showAllTags: false, // Used only in tag mode
     }
   },
   created () {
@@ -157,6 +178,17 @@ export default {
       this.$options.debounceSetSearchFunction = _.debounce((value) => {
         this.searchModel = value
       }, this.debounceValue)
+    }
+    /****************************************/
+
+    /********** Tag mode visibility *********/
+    if (this.buttonType === 'tag') {
+      // Reset "Show less" => "Show all"
+      this.$watch('$c_modelTag', (items) => {
+        if (this.showAllTags && items.length <= this.tagLimit) {
+          this.showAllTags = false;
+        }
+      })
     }
     /****************************************/
   },
@@ -286,7 +318,15 @@ export default {
           this.searchModel = value
         }
       }
-    }
+    },
+    // Used only in tag mode !
+    $c_modelTag() {
+      if (this.buttonType === 'tag') {
+        return !this.showAllTags && this.$c_model.length > this.tagLimit ? this.$c_model.slice(0, this.tagLimit) : this.$c_model
+      } else {
+        return this.$c_model
+      }
+    },
   },
   methods: {
     add (value) {
@@ -456,6 +496,19 @@ export default {
 <style lang="scss">
 .vue-opti-select-light {
   .dropdown {
+    &.btn-type-tag {
+      .tag-item {
+        margin: 0px 5px 5px 0px;
+        border: 1px solid;
+        display: block;
+        float: left;
+      }
+      .tag-toggle {
+        margin: 0px 5px 5px 0px;
+        float: left;
+        cursor: pointer;
+      }
+    }
     .dropdown-toggle {
       .button-placehoder-filter {
         width: 13px;
