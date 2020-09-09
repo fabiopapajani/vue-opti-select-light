@@ -8,13 +8,13 @@
         </span>
         <span v-else-if="buttonType === 'tag' && $c_modelTag.length" class="button-placehoder-tag">
           <template v-for="(option) in $c_modelTag">
-            <slot v-if="$_slot('TAG')" name="TAG" :option="option" :remove="() => remove($_optionKey(option))"></slot>
+            <slot v-if="$_slot('TAG')" name="TAG" :option="option" :remove="() => $_removeTag($_optionKey(option))"></slot>
             <span v-else :key="`tag-${$_optionKey(option)}`" class="tag-item">
               <span class="tag-name p-2" v-if="$_slot('TAG_LABEL')">
                 <slot name="TAG_LABEL" :option="option"></slot>
               </span>
               <span v-else class="tag-name p-2" v-html="$_optionLabel(option)"></span>
-              <span class="tag-remove p-1" @click.stop="remove($_optionKey(option))" title="Remove">
+              <span class="tag-remove p-1" @click.stop="$_removeTag($_optionKey(option))" title="Remove">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/><path d="M9 1L1 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/></svg>
               </span>
             </span>
@@ -416,6 +416,11 @@ export default {
       event.preventDefault()
       event.stopImmediatePropagation()
       return false
+    },
+    $_removeTag (value) {
+      this.remove(value)
+      const data = this.$_getModelPayload();
+      this.$emit('change', data);
     },
     $_emit () {
       const data = this.$_getModelPayload()
