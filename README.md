@@ -85,6 +85,8 @@ npm run lint
 | add() | Function(String or [Array of keys]) |
 | remove() | Function(String or [Array of keys]) |
 | clear() | |
+| show() | Open dropdown |
+| hide() | Hide dropdown |
 
 ### vee-validate 2.*
 | Prop | Description |
