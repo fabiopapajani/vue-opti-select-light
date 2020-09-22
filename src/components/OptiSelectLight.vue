@@ -358,6 +358,12 @@ export default {
       this.$_clear()
       this.$_emit()
     },
+    show () {
+      this.$refs['dd-light'].show()
+    },
+    hide () {
+      this.$refs['dd-light'].hide()
+    },
     $_clear () {
       this.selected = {}
       this.selectedMap = {}

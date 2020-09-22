@@ -109,14 +109,20 @@
           :groups="groups"
           button-placeholder="Select"
           button-type="tag"
-          searchable
+          searchablesdfd
           :search-fields="['content', 'sField']"
           :unique-key="option => option.optionalData.val"
           debounce
           :value="values">
-          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
-            ☆ <b>Select Options Options Options {{options.length}}</b>
+          <!-- <template #BUTTON_PLACEHOLDER>
+            <div class="search-input">
+              <input type="text" placeholder="Search..." @click.stop="$_onClickInput">
+              <b-icon icon="search" />
+            </div>
           </template> -->
+          <template #BUTTON_PLACEHOLDER="{ options }">
+            ☆ <b>Select Options Options Options {{options.length}}</b>
+          </template>
           <!-- <template #ITEM="{ option }">
             <a target="_blank" href="https://google.com">{{option.content}}</a>
           </template> -->
@@ -300,6 +306,10 @@ export default {
     },
     $_onClick(value) {
       console.log('@click', value)
+    },
+    $_onClickInput(event) {
+      this.$refs.select.show();
+      setTimeout(() => { event.target.focus(); }, 50)
     }
   }
 }
