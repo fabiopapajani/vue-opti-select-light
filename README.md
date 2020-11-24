@@ -84,7 +84,8 @@ npm run lint
 | ------ | ------ |
 | add() | Function(String or [Array of keys]) |
 | remove() | Function(String or [Array of keys]) |
-| clear() | |
+| selectAll() | Select All |
+| clear() | UnSelect All |
 | show() | Open dropdown |
 | hide() | Hide dropdown |
 

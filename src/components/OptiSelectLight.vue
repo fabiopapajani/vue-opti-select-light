@@ -354,6 +354,17 @@ export default {
         this.$_emit()
       }
     },
+    selectAll () {
+      if (!this.$c_allSelected) {
+        const allOptions = Object.values(this.$c_localOptions.map)
+        if (allOptions.length) {
+          allOptions.forEach(option => {
+            this.$_setItem(option)
+          })
+          this.$_emit()
+        }
+      }
+    },
     clear () {
       this.$_clear()
       this.$_emit()
@@ -384,7 +395,7 @@ export default {
       return this.$c_options.map[key]
     },
     $_selectItem (option) {
-      if (!this.prevent) this.$_setItem(option, true)
+      if (!this.prevent) this.$_setItem(option, true, true)
       if (!option.inputType && this.$refs['dd-light']) this.$refs['dd-light'].hide() // Close Dropdown on select
       if (!this.prevent) {
         if (!this.touched) this.touched = true
@@ -393,7 +404,7 @@ export default {
         this.$emit('click', this.$_originalOption(option.private.key), true)
       }
     },
-    $_setItem (option, trigger = false) {
+    $_setItem (option, trigger = false, toggle = false) {
       if (this.single || !option.inputType) {
         // If not define type or single select
         this.selected = {}
@@ -406,7 +417,7 @@ export default {
           this.$set(this.selected, option.private.key, true)
           this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
           if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
-        } else {
+        } else if (toggle) {
           this.$delete(this.selected, option.private.key)
           this.$delete(this.selectedMap, option.private.key)
           if (trigger) this.$emit('click', this.$_originalOption(option.private.key), false)
