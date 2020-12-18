@@ -44,7 +44,7 @@
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
       <div class="options-list">
-        <template v-for="(groupedOptions, i) in $c_localSearchableOptions">
+        <template v-for="(groupedOptions, i) in $c_locaVisibleOptions">
           <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :header="groupedOptions.group.content || ''" :key="`component-${i}`">
             <slot v-if="groupedOptions.group && $_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
             <template #header v-if="groupedOptions.group && $_slot(`GROUP_${groupedOptions.group.value}`)" >
@@ -115,10 +115,10 @@ export default {
     buttonPlaceholderMultiple: { type: Function, default: ({ count, suffix }) => `${count} item${suffix} selected` },
     single: { type: Boolean, default: false },
     lazy: { type: Boolean, default: false },
+    lazyRender: { type: Boolean, default: false },
     emitOnClick: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     prevent: { type: Boolean, default: false },
-    
   },
   model: {
     prop: 'valueModel',
@@ -133,6 +133,7 @@ export default {
       modelHash: null,
       valueHash: null,
       showAllTags: false, // Used only in tag mode
+      visibleOptions: [], // Visible Options (lazy-render)
     }
   },
   created () {
@@ -188,6 +189,17 @@ export default {
         if (this.showAllTags && items.length <= this.tagLimit) {
           this.showAllTags = false;
         }
+      })
+    }
+    /****************************************/
+
+    /*********** Debounced Render ***********/
+    if (this.lazyRender) {
+      this.$options.debounceDisplayOptionsFunction = _.debounce(() => {
+        this.$_updateVisibleOptions()
+      }, 200)
+      this.$watch('$c_localSearchableOptions', () => {
+        this.$_updateVisibleOptions(true)
       })
     }
     /****************************************/
@@ -289,6 +301,9 @@ export default {
       } else {
         return this.$c_localOptions.array
       }
+    },
+    $c_locaVisibleOptions () {
+      return this.lazyRender ? this.visibleOptions : this.$c_localSearchableOptions;
     },
     $c_model () {
       return Object.values(this.selectedMap)
@@ -447,6 +462,16 @@ export default {
     $_shown () {
       this.touched = false
       if (this.searchable) this.$refs['dd-light-search'].focus()
+      /*********** Scroll observator **********/
+      if (this.lazyRender && !this.$options.onscrollEventFlag) {
+        if (!this.lazy) this.$options.onscrollEventFlag = true;
+        const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
+        scrollableDiv.onscroll = () => {
+          this.$options.debounceDisplayOptionsFunction();
+        };
+        this.$_updateVisibleOptions();
+      }
+      /****************************************/
       this.$emit('shown')
     },
     $_hidden () {
@@ -510,6 +535,19 @@ export default {
       let value = val || []
       if (!Array.isArray(value)) value = [value]
       return value
+    },
+    $_updateVisibleOptions (reset = false) {
+      const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
+      const { scrollTop } = scrollableDiv;
+      if (reset) this.visibleOptions = [];
+      if (!this.visibleOptions.length || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
+        if (this.visibleOptions.length < this.$c_localSearchableOptions.length) {
+          // Load more options
+          // TODO split visible by groups
+          this.visibleOptions.push(...this.$c_localSearchableOptions.slice(this.visibleOptions.length, this.visibleOptions.length + 100));
+          scrollableDiv.scrollTo(0, scrollTop);
+        }
+      }
     }
   }
 }

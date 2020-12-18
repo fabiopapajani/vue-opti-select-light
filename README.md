@@ -19,6 +19,10 @@ npm run build-bundle
 ```sh
 npm run lint
 ```
+### Description
+Hight performance dropdown.
+Tested with 1,000,000 items with lazyRender.
+
 ### Props
 | Name | Description |
 | ------ | ------ |
@@ -46,6 +50,7 @@ npm run lint
 | buttonPlaceholderMultiple | Function({ count, suffix })  => `${count} item${suffix} selected` |
 | single | Boolean default => FALSE |
 | lazy | Boolean default => FALSE |
+| lazyRender | Boolean default => FALSE |
 | emitOnClick | Boolean default => FALSE |
 | disabled | Boolean default => FALSE |
 | prevent | Boolean default => FALSE (Prevent from selecting) |
@@ -115,3 +120,5 @@ npm run lint
   button-block
 />
  ```
+#### Todo!
+* Lazy Render groups support

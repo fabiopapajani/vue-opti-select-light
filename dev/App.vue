@@ -149,6 +149,34 @@
       </div>
     </div>
     
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Types multi select tag BigData</h4>
+        <vue-opti-select-light 
+          ref="selectTagBigData"
+          unique-key="id"
+          label-key="name"
+          v-model="models.tagMultiSelectBigData"
+          :options="$options.bigDataOptions"
+          option-type="checkbox"
+          button-placeholder="Select accounts"
+          button-type="tag"
+          :tag-limit="40"
+          button-block
+          searchable
+          lazy
+          lazy-render>
+          <!-- <template #TAG="{ option, remove }">
+            <span class="name p-2">{{ option.name }}</span>
+            <span class="remove p-2" @click.stop="remove()">x</span>
+          </template> -->
+          <!-- <template #TAG_LABEL="{ option }">
+            --{{option.name}}
+          </template> -->
+        </vue-opti-select-light>
+        <pre v-if="models.tagMultiSelectBigData">{{models.tagMultiSelectBigData}}</pre>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -158,6 +186,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import VueOptiSelectLight from '../src/index';
+import { generateData } from './bigDataGenerator.js';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
@@ -172,6 +201,7 @@ export default {
         typesSelect: [],
         typesMultiSelect: [],
         tagMultiSelect: [],
+        tagMultiSelectBigData: [],
         singleSelect: null
       },
       options: {
@@ -296,6 +326,8 @@ export default {
     }
   },
   created () {
+    // console.log(generateData(10));
+    this.$options.bigDataOptions = generateData(100000);
     setTimeout(() => {
       this.$refs.selectTypes.add(14)
     }, 3000)
