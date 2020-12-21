@@ -538,14 +538,16 @@ export default {
     },
     $_updateVisibleOptions (reset = false) {
       const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
-      const { scrollTop } = scrollableDiv;
-      if (reset) this.visibleOptions = [];
-      if (!this.visibleOptions.length || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
-        if (this.visibleOptions.length < this.$c_localSearchableOptions.length) {
-          // Load more options
-          // TODO split visible by groups
-          this.visibleOptions.push(...this.$c_localSearchableOptions.slice(this.visibleOptions.length, this.visibleOptions.length + 100));
-          scrollableDiv.scrollTo(0, scrollTop);
+      if (scrollableDiv) {
+        const { scrollTop } = scrollableDiv;
+        if (reset) this.visibleOptions = [];
+        if (!this.visibleOptions.length || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
+          if (this.visibleOptions.length < this.$c_localSearchableOptions.length) {
+            // Load more options
+            // TODO split visible by groups
+            this.visibleOptions.push(...this.$c_localSearchableOptions.slice(this.visibleOptions.length, this.visibleOptions.length + 100));
+            scrollableDiv.scrollTo(0, scrollTop);
+          }
         }
       }
     }
