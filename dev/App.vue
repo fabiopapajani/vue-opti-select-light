@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-2">
-    <div class="row">
+    <div v-if="true" class="row">
       
       <div class="col-md-3">
         <h4>Types single select</h4>
@@ -149,7 +149,7 @@
       </div>
     </div>
     
-    <div class="row">
+    <div v-if="true" class="row">
       <div class="col-md-6">
         <h4>Types multi select tag BigData</h4>
         <vue-opti-select-light 
@@ -177,6 +177,36 @@
         <pre v-if="models.tagMultiSelectBigData">{{models.tagMultiSelectBigData}}</pre>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-3">
+        <h4>Types multi select tag Server Side</h4>
+        <vue-opti-select-light 
+          ref="selectTagServerSide"
+          unique-key="id"
+          label-key="name"
+          v-model="models.tagMultiSelectServerSide"
+          :options="$_serverSideOptions"
+          option-type="checkbox"
+          button-placeholder="Select accounts"
+          button-type="tag"
+          :button-placeholder-multiple="({ count, suffix }) => `${count} account${suffix} selected`"
+          @change="$_onChange"
+          @click="$_onClick"
+          :tag-limit="5"
+          button-block
+          searchable>
+          <!-- <template #TAG="{ option, remove }">
+            <span class="name p-2">{{ option.name }}</span>
+            <span class="remove p-2" @click.stop="remove()">x</span>
+          </template> -->
+          <!-- <template #TAG_LABEL="{ option }">
+            --{{option.name}}
+          </template> -->
+        </vue-opti-select-light>
+        <pre v-if="models.tagMultiSelectServerSide">{{models.tagMultiSelectServerSide}}</pre>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -186,7 +216,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import VueOptiSelectLight from '../src/index';
-import { generateData } from './bigDataGenerator.js';
+import { generateData } from './dataGenerator.js';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
@@ -201,6 +231,28 @@ export default {
         typesSelect: [],
         typesMultiSelect: [],
         tagMultiSelect: [],
+        tagMultiSelectServerSide: [
+          {
+            "id": "10-200",
+            "name": "Item index 10-200",
+            "timezone": "America/New_York",
+            "platform": "native",
+            "created_at": "2020-01-23T10:18:24.610Z",
+            "updated_at": "2020-01-23T10:18:24.610Z",
+            "uniqueName": "RevContent",
+            "group": "tr"
+          },
+          {
+            "id": "11-200",
+            "name": "Item index 11-200",
+            "timezone": "America/New_York",
+            "platform": "native",
+            "created_at": "2020-01-23T10:18:24.610Z",
+            "updated_at": "2020-01-23T10:18:24.610Z",
+            "uniqueName": "RevContent",
+            "group": "ts"
+          }
+        ],
         tagMultiSelectBigData: [],
         singleSelect: null
       },
@@ -224,6 +276,15 @@ export default {
           { value: 'o', content: 'O', sField: 'ALL', optionalData: { fn: () => 'testO', val: 'o' }, group: 'ga' }
         ],
         types: [
+          {
+              "id":6,
+              "name":"RevContent",
+              "timezone":"America/New_York",
+              "platform":"native",
+              "created_at":"2020-01-23T10:18:24.610Z",
+              "updated_at":"2020-01-23T10:18:24.610Z",
+              "uniqueName":"RevContent"
+          },
           {
               "id":6,
               "name":"RevContent",
@@ -342,6 +403,15 @@ export default {
     $_onClickInput(event) {
       this.$refs.select.show();
       setTimeout(() => { event.target.focus(); }, 50)
+    },
+    async $_serverSideOptions(page = 1, search = '') {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const limit = 100;
+          const options = generateData(limit, (page - 1) * limit, search);
+          resolve(options);
+        }, 1000)
+      });
     }
   }
 }

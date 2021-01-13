@@ -39,7 +39,7 @@
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <b-dd-header v-if="searchable" class="search-container">
-        <input ref="dd-light-search" type="text" v-model="$c_searchModel" :placeholder="searchPlaceholder" />
+        <input ref="dd-light-search" type="text" v-model="$c_searchModel" :placeholder="searchPlaceholder" :disabled="serverSideLoading" />
         <span v-show="$c_searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
@@ -86,6 +86,7 @@
 <script>
 import hash from 'object-hash';
 import _ from 'lodash';
+import PromiseQueue from './PromiseQueue.class';
 
 export default {
   name: 'vue-opti-select-light',
@@ -93,7 +94,7 @@ export default {
     valueModel: { type: [Array, Object, null], default: () => [] },
     value: { default: () => [] },
     selectFirst: { type: Boolean, default: false },
-    options: { type: Array, default: () => [] },
+    options: { type: [Array, Function], default: () => [] },
     uniqueKey: { type: [String, Function], default: 'value' },
     labelKey: { type: [String, Function], default: 'content' },
     searchable: { type: Boolean, default: false },
@@ -134,9 +135,20 @@ export default {
       valueHash: null,
       showAllTags: false, // Used only in tag mode
       visibleOptions: [], // Visible Options (lazy-render)
+      serverSideOptions: [], // Server-Side options
+      serverSidePage: 0, // Server-Side page
+      serverSideLoading: false,
     }
   },
-  created () {
+  async created () {
+    if (this.$c_isServerSide) {
+      this.$options.promiseQueue = new PromiseQueue();
+      this.$_pullServerSideOptions(true);
+      this.$watch('searchModel', async () => {
+        this.$_pullServerSideOptions(true);
+      })
+    }
+
     /*********** Set Default Hash ***********/
     this.modelHash = this.$_hashModel()
     this.valueHash = hash.MD5(this.value);
@@ -153,8 +165,10 @@ export default {
       this.$_setFromModel(this.valueModel)
     } else if (this.selectFirst) {
       // Set Default First Option
-      const key = this.$_optionKey(this.$c_options.array[0])
-      this.add(key)
+      if (this.$c_options.array.length) {
+        const key = this.$_optionKey(this.$c_options.array[0])
+        this.add(key)
+      }
     }
     /****************************************/
 
@@ -175,7 +189,7 @@ export default {
     /****************************************/
 
     /*********** Debounced Search ***********/
-    if (this.debounce) {
+    if (this.debounce || this.$c_isServerSide) {
       this.$options.debounceSetSearchFunction = _.debounce((value) => {
         this.searchModel = value
       }, this.debounceValue)
@@ -203,6 +217,17 @@ export default {
       })
     }
     /****************************************/
+
+    /***** Debounced Render Server Side *****/
+    if (this.$c_isServerSide) {
+      this.$options.debounceGetOptionsFunction = _.debounce(() => {
+        this.$_updateServerSideOptions()
+      }, 200)
+      // this.$watch('$c_localSearchableOptions', () => {
+      //   this.$_updateServerSideOptions(true)
+      // })
+    }
+    /****************************************/
   },
   mounted () {
     /**** Observe Dropdown Menu Height ******/
@@ -223,11 +248,17 @@ export default {
     /****************************************/
   },
   computed: {
+    $c_isServerSide () {
+      return typeof this.options === 'function';
+    },
     $c_options () {
-      const options = { array: this.options, map: {}, groupsMap: {} }
+      const options = { array: [], map: {}, groupsMap: {} }
       this.groups.forEach(group => { options.groupsMap[group.value] = group })
-      this.options.forEach(_option => {
+      const rawOptions = this.$c_isServerSide ? this.serverSideOptions : this.options;
+
+      rawOptions.forEach(_option => {
         const key = this.$_optionKey(_option)
+        if (!options.map[key]) options.array.push(_option)
         options.map[key] = _option
       })
       return options
@@ -240,32 +271,7 @@ export default {
 
       // Generate options (grouped)
       this.$c_options.array.forEach(_option => {
-        const key = this.$_optionKey(_option)
-        const label = this.$_optionLabel(_option)
-        const option = Object.assign({}, _option, { private: { key, label } })
-        
-        // Option Type Priorities: 1-> Option, 2-> Group, 3-> Prop
-        if (option.inputType) {
-          // Option
-          if (option.inputType === 'radio') {
-            option.inputName = this.$_radioName(option.inputName || 'global')
-          }
-        } else if (computedOptions.groupsMap[option.group] && computedOptions.groupsMap[option.group].inputType) {
-          // Group
-          const group = computedOptions.groupsMap[option.group]
-          option.inputType = group.inputType
-          if (option.inputType === 'radio') {
-            option.inputName = this.groupBoundary ? this.$_radioName(group.value) : this.$_radioName('global')
-          }
-        } else if (this.optionType !== 'text') {
-          // Prop
-          if (this.optionType === 'checkbox') {
-            option.inputType = 'checkbox'
-          } else if (this.optionType === 'radio') {
-            option.inputType = 'radio'
-            option.inputName = this.$_radioName('global')
-          }
-        }
+        const option = this.$_createItem(_option);
 
         if (option.group && computedOptions.groupsMap[option.group]) {
           // Grouped
@@ -280,27 +286,25 @@ export default {
           computedOptions.array.push({ group: false, options: [option] })
         }
 
-        // Add Search Pattern
-        if (this.searchable) option.private.searchPattern = this.$_getSearchPattern(option, computedOptions.groupsMap[option.group])
-
-        computedOptions.map[key] = option
+        computedOptions.map[option.private.key] = option
       })
       return computedOptions
     },
     $c_localSearchableOptions () {
-      const searchValue = this.$c_searchModel.trim().toLowerCase()
-      if (this.searchable && searchValue) {
-        const options = []
-        this.$c_localOptions.array.forEach(item => {
-          const filteredOptions = item.options.filter(option => option.private.searchPattern.includes(searchValue))
-          if (filteredOptions.length) {
-            options.push(Object.assign({}, item, { options: filteredOptions }))
-          }
-        })
-        return options
-      } else {
-        return this.$c_localOptions.array
+      if (!this.$c_isServerSide) {
+        const searchValue = this.$c_searchModel.trim().toLowerCase()
+        if (this.searchable && searchValue ) {
+          const options = []
+          this.$c_localOptions.array.forEach(item => {
+            const filteredOptions = item.options.filter(option => option.private.searchPattern.includes(searchValue))
+            if (filteredOptions.length) {
+              options.push(Object.assign({}, item, { options: filteredOptions }))
+            }
+          })
+          return options
+        }
       }
+      return this.$c_localOptions.array
     },
     $c_locaVisibleOptions () {
       return this.lazyRender ? this.visibleOptions : this.$c_localSearchableOptions;
@@ -356,19 +360,39 @@ export default {
     remove (value) {
       if (value) {
         const keys = Array.isArray(value) ? value : [value]
-        keys.forEach(key => {
-          const option = this.$c_localOptions.map[key]
-          if (this.selected[option.private.key]) {
-            this.$delete(this.selected, option.private.key)
-            this.$delete(this.selectedMap, option.private.key)
-          } else if (this.selected[option.inputName] === option.private.key) {
-            this.$delete(this.selected, option.inputName)
-            this.$delete(this.selectedMap, option.inputName)
+        keys.forEach(_key => {
+          let key = null;
+          if (this.$c_localOptions.map[_key] || this.selectedMap[_key]) {
+            key = _key;
+          } else if (this.selectedMap[this.$_radioName(_key)]) {
+            key = this.$_radioName(_key);
           }
-        })
+
+          if (this.selected[key]) {
+            this.$delete(this.selected, key)
+            this.$delete(this.selectedMap, key)
+          }
+        });
         this.$_emit()
       }
     },
+    // remove (value) {
+    //   if (value) {
+    //     const keys = Array.isArray(value) ? value : [value]
+    //     keys.forEach(key => {
+    //       const option = this.$c_localOptions.map[key]
+
+    //       if (this.selected[option.private.key]) {
+    //         this.$delete(this.selected, option.private.key)
+    //         this.$delete(this.selectedMap, option.private.key)
+    //       } else if (this.selected[option.inputName] === option.private.key) {
+    //         this.$delete(this.selected, option.inputName)
+    //         this.$delete(this.selectedMap, option.inputName)
+    //       }
+    //     })
+    //     this.$_emit()
+    //   }
+    // },
     selectAll () {
       if (!this.$c_allSelected) {
         const allOptions = Object.values(this.$c_localOptions.map)
@@ -409,6 +433,40 @@ export default {
     $_originalOption (key) {
       return this.$c_options.map[key]
     },
+    $_createItem (_option) {
+      const key = this.$_optionKey(_option)
+      const label = this.$_optionLabel(_option)
+      const option = Object.assign({}, _option, { private: { key, label } })
+      const groupsMap = this.$c_options.groupsMap;
+      
+      // Option Type Priorities: 1-> Option, 2-> Group, 3-> Prop
+      if (option.inputType) {
+        // Option
+        if (option.inputType === 'radio') {
+          option.inputName = this.$_radioName(option.inputName || 'global')
+        }
+      } else if (groupsMap[option.group] && groupsMap[option.group].inputType) {
+        // Group
+        const group = groupsMap[option.group]
+        option.inputType = group.inputType
+        if (option.inputType === 'radio') {
+          option.inputName = this.groupBoundary ? this.$_radioName(group.value) : this.$_radioName('global')
+        }
+      } else if (this.optionType !== 'text') {
+        // Prop
+        if (this.optionType === 'checkbox') {
+          option.inputType = 'checkbox'
+        } else if (this.optionType === 'radio') {
+          option.inputType = 'radio'
+          option.inputName = this.$_radioName('global')
+        }
+      }
+
+      // Add Search Pattern
+      if (this.searchable && !this.$c_isServerSide) option.private.searchPattern = this.$_getSearchPattern(option, groupsMap[option.group])
+
+      return option;
+    },
     $_selectItem (option) {
       if (!this.prevent) this.$_setItem(option, true, true)
       if (!option.inputType && this.$refs['dd-light']) this.$refs['dd-light'].hide() // Close Dropdown on select
@@ -419,28 +477,29 @@ export default {
         this.$emit('click', this.$_originalOption(option.private.key), true)
       }
     },
-    $_setItem (option, trigger = false, toggle = false) {
+    $_setItem (option, trigger = false, toggle = false, _originalOption) {
+      const originalOption = _originalOption || this.$_originalOption(option.private.key);
       if (this.single || !option.inputType) {
         // If not define type or single select
         this.selected = {}
         this.$set(this.selected, option.private.key, true)
         this.selectedMap = {}
-        this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
-        if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
+        this.$set(this.selectedMap, option.private.key, originalOption)
+        if (trigger) this.$emit('click', originalOption, true)
       } else if (option.inputType === 'checkbox') {
         if (!this.selected[option.private.key]) {
           this.$set(this.selected, option.private.key, true)
-          this.$set(this.selectedMap, option.private.key, this.$_originalOption(option.private.key))
-          if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
+          this.$set(this.selectedMap, option.private.key, originalOption)
+          if (trigger) this.$emit('click', originalOption, true)
         } else if (toggle) {
           this.$delete(this.selected, option.private.key)
           this.$delete(this.selectedMap, option.private.key)
-          if (trigger) this.$emit('click', this.$_originalOption(option.private.key), false)
+          if (trigger) this.$emit('click', originalOption, false)
         }
       } else if (option.inputType === 'radio') {
         this.$set(this.selected, option.inputName, option.private.key)
-        this.$set(this.selectedMap, option.inputName, this.$_originalOption(option.private.key))
-        if (trigger) this.$emit('click', this.$_originalOption(option.private.key), true)
+        this.$set(this.selectedMap, option.inputName, originalOption)
+        if (trigger) this.$emit('click', originalOption, true)
       }
     },
     $_clickInput () {
@@ -472,6 +531,17 @@ export default {
         this.$_updateVisibleOptions();
       }
       /****************************************/
+      /*********** Scroll observator **********/
+      if (this.$c_isServerSide && !this.$options.onscrollEventFlag) {
+        if (!this.lazy) this.$options.onscrollEventFlag = true;
+        const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
+        scrollableDiv.onscroll = () => {
+          this.$options.debounceGetOptionsFunction();
+        };
+        this.$_updateServerSideOptions();
+      }
+      /****************************************/
+      
       this.$emit('shown')
     },
     $_hidden () {
@@ -513,10 +583,18 @@ export default {
         this.$_clear()
         // Set from v-model
         const value = this.$_getValueModelPayload(val)
-        value.forEach(option => {
-          const key = this.$_optionKey(option)
-          if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
-        })
+        if (this.$c_isServerSide) {
+          value.forEach(_option => {
+            const key = this.$_optionKey(_option)
+            const option = this.$c_localOptions.map[key] || this.$_createItem(_option);
+            this.$_setItem(option, false, false, _option);
+          })
+        } else {
+          value.forEach(option => {
+            const key = this.$_optionKey(option)
+            if (this.$c_localOptions.map[key]) this.$_setItem(this.$c_localOptions.map[key])
+          })
+        }
         // Update Model Hash
         const data = this.$_getModelPayload();
         this.modelHash = this.$_hashModel(data);
@@ -549,6 +627,33 @@ export default {
             scrollableDiv.scrollTo(0, scrollTop);
           }
         }
+      }
+    },
+    async $_updateServerSideOptions (reset = false) {
+      const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
+      if (scrollableDiv) {
+        const { scrollTop } = scrollableDiv;
+        if (!this.serverSideOptions.length || reset || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
+          this.$_pullServerSideOptions(reset);
+          // scrollableDiv.scrollTo(0, scrollTop);
+        }
+      }
+    },
+    $_pullServerSideOptions (reset = false) {
+      if (reset) {
+        this.$options.promiseQueue.createCancellablePromise(() => {
+          return this.options(1, this.$c_searchModel);
+        }, (result) => {
+          this.serverSidePage = 1;
+          this.serverSideOptions = result;
+        })
+      } else {
+        this.$options.promiseQueue.createCancellablePromise(() => {
+          return this.options(this.serverSidePage + 1, this.$c_searchModel);
+        }, (result) => {
+          this.serverSidePage++;
+          this.serverSideOptions.push(...result);
+        })
       }
     }
   }

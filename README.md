@@ -28,7 +28,7 @@ Tested with 1,000,000 items with lazyRender.
 | ------ | ------ |
 | value | Key or [Array of keys] |
 | selectFirst | Boolean default => FALSE |
-| options | [Array of object] |
+| options | [Array of object or Function (Server Side)] |
 | uniqueKey | String OR Function(option) => "String", Default "value" |
 | labelKey | String OR Function(option) => "String", Default "content" |
 | searchable | Boolean default => FALSE |
