@@ -138,6 +138,7 @@ export default {
       serverSideOptions: [], // Server-Side options
       serverSidePage: 0, // Server-Side page
       serverSideLoading: false,
+      resetScroll: false,
     }
   },
   async created () {
@@ -376,6 +377,12 @@ export default {
         this.$_emit()
       }
     },
+    resetOptions() {
+      if (this.$c_isServerSide) {
+        this.$_updateServerSideOptions(true);
+        this.resetScroll = true;
+      }
+    },
     // remove (value) {
     //   if (value) {
     //     const keys = Array.isArray(value) ? value : [value]
@@ -521,25 +528,50 @@ export default {
     $_shown () {
       this.touched = false
       if (this.searchable) this.$refs['dd-light-search'].focus()
+      
       /*********** Scroll observator **********/
-      if (this.lazyRender && !this.$options.onscrollEventFlag) {
+      const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
+      if (this.resetScroll) {
+        // Reset Scroll
+        scrollableDiv.scrollTo(0, 0);
+        this.resetScroll = false;
+      }
+      // Load once if not lazy
+      if ((this.$c_isServerSide || this.lazyRender) && !this.$options.onscrollEventFlag) {
         if (!this.lazy) this.$options.onscrollEventFlag = true;
-        const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
-        scrollableDiv.onscroll = () => {
-          this.$options.debounceDisplayOptionsFunction();
-        };
-        this.$_updateVisibleOptions();
+        if (this.$c_isServerSide) {
+          // Server-Side on scroll event observator
+          scrollableDiv.onscroll = () => {
+            this.$options.debounceGetOptionsFunction();
+          };
+          this.$_updateServerSideOptions();
+        } else {
+          // Lazy Virtual Render on scroll event observator
+          scrollableDiv.onscroll = () => {
+            this.$options.debounceDisplayOptionsFunction();
+          };
+          this.$_updateVisibleOptions();
+        }
       }
       /****************************************/
+
       /*********** Scroll observator **********/
-      if (this.$c_isServerSide && !this.$options.onscrollEventFlag) {
-        if (!this.lazy) this.$options.onscrollEventFlag = true;
-        const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
-        scrollableDiv.onscroll = () => {
-          this.$options.debounceGetOptionsFunction();
-        };
-        this.$_updateServerSideOptions();
-      }
+      // if (this.lazyRender && !this.$options.onscrollEventFlag) {
+      //   if (!this.lazy) this.$options.onscrollEventFlag = true;
+      //   scrollableDiv.onscroll = () => {
+      //     this.$options.debounceDisplayOptionsFunction();
+      //   };
+      //   this.$_updateVisibleOptions();
+      // }
+      /****************************************/
+      /*********** Scroll observator **********/
+      // if (this.$c_isServerSide && !this.$options.onscrollEventFlag) {
+      //   if (!this.lazy) this.$options.onscrollEventFlag = true;
+      //   scrollableDiv.onscroll = () => {
+      //     this.$options.debounceGetOptionsFunction();
+      //   };
+      //   this.$_updateServerSideOptions();
+      // }
       /****************************************/
       
       this.$emit('shown')
@@ -635,6 +667,7 @@ export default {
         const { scrollTop } = scrollableDiv;
         if (!this.serverSideOptions.length || reset || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
           this.$_pullServerSideOptions(reset);
+          if (reset) scrollableDiv.scrollTo(0, 0);
           // scrollableDiv.scrollTo(0, scrollTop);
         }
       }

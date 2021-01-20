@@ -93,6 +93,7 @@ Tested with 1,000,000 items with lazyRender.
 | clear() | UnSelect All |
 | show() | Open dropdown |
 | hide() | Hide dropdown |
+| resetOptions() | Reset Server-Side options |
 
 ### vee-validate 2.*
 | Prop | Description |
