@@ -1,6 +1,7 @@
 export default class PromiseQueue {
   constructor () {
     this.queue = []
+    this.__callbackOnEmtpyQueue = () => {}
   }
 
   createCancellablePromise(fnPromise, fnCallback) {
@@ -18,11 +19,18 @@ export default class PromiseQueue {
     });
   }
 
+  onEmptyQueue(fn = () => {}) {
+    this.__callbackOnEmtpyQueue = fn;
+  }
+
   __garbageCollectionQueue () {
     let clearQueue = true;
     this.queue.forEach((item) => {
       if (item !== null) clearQueue = false;
     });
-    if (clearQueue) this.queue = [];
+    if (clearQueue) {
+      this.queue = [];
+      this.__callbackOnEmtpyQueue();
+    }
   }
 }

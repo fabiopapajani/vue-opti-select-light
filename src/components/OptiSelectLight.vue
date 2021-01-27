@@ -39,7 +39,7 @@
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
       <b-dd-header v-if="searchable" class="search-container">
-        <input ref="dd-light-search" type="text" v-model="$c_searchModel" :placeholder="searchPlaceholder" :disabled="serverSideLoading" />
+        <input ref="dd-light-search" type="text" v-model="$c_searchModel" :placeholder="searchPlaceholder" />
         <span v-show="$c_searchModel.length" @click="$_clearSearch" class="btn-clear-search">x</span>
       </b-dd-header>
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
@@ -73,6 +73,9 @@
             <slot v-if="groupedOptions.group && $_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
           </component>
         </template>
+        <div v-if="serverSideLoading" class="options-loading text-center">
+          <i class="fa fa-refresh fa-spin"></i>
+        </div>
       </div>
       <template v-if="$c_searchModel.length && $c_localSearchableOptions.length === 0">
         <slot v-if="$_slot('SEARCH_NO_RESULTS')" name="SEARCH_NO_RESULTS"></slot>
@@ -144,6 +147,9 @@ export default {
   async created () {
     if (this.$c_isServerSide) {
       this.$options.promiseQueue = new PromiseQueue();
+      this.$options.promiseQueue.onEmptyQueue(() => {
+        this.serverSideLoading = false;
+      });
       this.$_pullServerSideOptions(true);
       this.$watch('searchModel', async () => {
         this.$_pullServerSideOptions(true);
@@ -673,6 +679,7 @@ export default {
       }
     },
     $_pullServerSideOptions (reset = false) {
+      this.serverSideLoading = true;
       if (reset) {
         this.$options.promiseQueue.createCancellablePromise(() => {
           return this.options(1, this.$c_searchModel);
