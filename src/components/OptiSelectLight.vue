@@ -45,32 +45,45 @@
       <slot v-if="$_slot('HEADER_2')" name="HEADER_2"></slot>
       <div class="options-list">
         <template v-for="(groupedOptions, i) in $c_locaVisibleOptions">
-          <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :header="groupedOptions.group.content || ''" :key="`component-${i}`">
-            <slot v-if="groupedOptions.group && $_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-            <template #header v-if="groupedOptions.group && $_slot(`GROUP_${groupedOptions.group.value}`)" >
-              <slot :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-            </template>
-            <template #header v-else-if="groupedOptions.group && $_slot('GROUP')" >
-              <slot name="GROUP" :group="groupedOptions.group"></slot>
-            </template>
-            
-            <template v-for="(option, j) in groupedOptions.options">
-              <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-              <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, `dropdown-item dropdown-item-${option.inputType || 'text'} m-0`]" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
-                <div class="option-select pull-left mr-2" v-if="option.inputType">
-                  <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
-                  <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
-                </div>
-                <div class="option-content">
-                  <slot v-if="$_slot(`ITEM_${option.private.key}`)" :name="`ITEM_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
-                  <slot v-else-if="$_slot('ITEM')" name="ITEM" :option="$_originalOption(option.private.key)"></slot>
-                  <span v-else v-html="option.private.label"></span>
-                </div>
-              </label>
-              <slot v-if="$_slot(`ITEM_AFTER_${option.private.key}`)" :name="`ITEM_AFTER_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+          <component :is="groupedOptions.group ? 'b-dd-group' : 'div'" :key="`component-${i}`">
+            <template v-if="groupedOptions.group">
+              <slot v-if="$_slot(`GROUP_BEFORE_${groupedOptions.group.value}`)" :name="`GROUP_BEFORE_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+              <slot v-else-if="$_slot('GROUP_BEFORE')" name="GROUP_BEFORE" :group="groupedOptions.group"></slot>
             </template>
 
-            <slot v-if="groupedOptions.group && $_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+            <template #header v-if="groupedOptions.group">
+              <template v-if="(typeof groupsVisibleState[groupedOptions.group.value] !== 'undefined')">
+                <span class="group-collapse" @click="$_collapseGroup(groupedOptions.group.value)">
+                  <i :class="`fa fa-angle-${$c_searchModel || groupsVisibleState[groupedOptions.group.value] ? 'up' : 'down'}`"></i>
+                </span>
+              </template>
+              <slot v-if="$_slot(`GROUP_${groupedOptions.group.value}`)" :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+              <slot v-else-if="$_slot('GROUP')" name="GROUP" :group="groupedOptions.group"></slot>
+              <template v-else>{{ groupedOptions.group.content || '' }}</template>
+            </template>
+            
+            <template v-if="$c_searchModel || (typeof groupsVisibleState[groupedOptions.group.value] === 'undefined') || groupsVisibleState[groupedOptions.group.value]">
+              <template v-for="(option, j) in groupedOptions.options">
+                <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+                <label role="menuitem" :class="[{ 'disabled': !!option.disabled, 'selected': (selected[option.private.key] || selected[option.inputName] === option.private.key) }, `dropdown-item dropdown-item-${option.inputType || 'text'} m-0`]" :key="`option-${i}-${j}`" @click="$_selectItem(option)">
+                  <div class="option-select pull-left mr-2" v-if="option.inputType">
+                    <input v-if="option.inputType === 'checkbox'" type="checkbox" :true-value="true" :false-value="false" v-model="selected[option.private.key]" @click="$_clickInput" />
+                    <input v-else-if="option.inputType === 'radio'" type="radio" :value="option.private.key" :name="option.inputName" v-model="selected[option.inputName]" @click="$_clickInput">
+                  </div>
+                  <div class="option-content">
+                    <slot v-if="$_slot(`ITEM_${option.private.key}`)" :name="`ITEM_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+                    <slot v-else-if="$_slot('ITEM')" name="ITEM" :option="$_originalOption(option.private.key)"></slot>
+                    <span v-else v-html="option.private.label"></span>
+                  </div>
+                </label>
+                <slot v-if="$_slot(`ITEM_AFTER_${option.private.key}`)" :name="`ITEM_AFTER_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
+              </template>
+            </template>
+
+            <template v-if="groupedOptions.group">
+              <slot v-if="$_slot(`GROUP_AFTER_${groupedOptions.group.value}`)" :name="`GROUP_AFTER_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
+              <slot v-else-if="$_slot('GROUP_AFTER')" name="GROUP_AFTER" :group="groupedOptions.group"></slot>
+            </template>
           </component>
         </template>
         <div v-if="serverSideLoading" class="options-loading text-center">
@@ -108,6 +121,7 @@ export default {
     debounceValue: { type: Number, default: 250 },
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
+    groupCollapse: { type: Boolean, default: false }, // Default: expanded groups
     buttonType: { type: String, default: 'placeholder' },
     tagLimit: { type: Number, default: 50 },
     buttonNoCaret: { type: Boolean, default: false },
@@ -142,6 +156,7 @@ export default {
       serverSidePage: 0, // Server-Side page
       serverSideLoading: false,
       resetScroll: false,
+      groupsVisibleState: {},
     }
   },
   async created () {
@@ -159,6 +174,14 @@ export default {
     /*********** Set Default Hash ***********/
     this.modelHash = this.$_hashModel()
     this.valueHash = hash.MD5(this.value);
+    /****************************************/
+
+    /***** Create Collapse Groups Model *****/
+    if (this.groups.length) {
+      this.groups.forEach((group) => {
+        this.$set(this.groupsVisibleState, group.value, !this.groupCollapse);
+      });
+    }
     /****************************************/
 
     /********** Set Default Values **********/
@@ -695,6 +718,9 @@ export default {
           this.serverSideOptions.push(...result);
         })
       }
+    },
+    $_collapseGroup(groupValue) {
+      this.groupsVisibleState[groupValue] = !this.groupsVisibleState[groupValue];
     }
   }
 }
@@ -752,6 +778,12 @@ export default {
       .options-list {
         max-height: 400px;
         overflow-y: auto;
+        header.dropdown-header {
+          .group-collapse {
+            padding-right: 0.5rem;
+            cursor: pointer;
+          }
+        }
         .dropdown-item {
           &.selected, &:active {
             color: #16181b;

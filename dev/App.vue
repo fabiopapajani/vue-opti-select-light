@@ -178,7 +178,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div v-if="true" class="row">
       <div class="col-md-3">
         <h4>Types multi select tag Server Side</h4>
         <vue-opti-select-light 
@@ -207,6 +207,57 @@
         <pre v-if="models.tagMultiSelectServerSide">{{models.tagMultiSelectServerSide}}</pre>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-3">
+        <h4>Multi select Group collapse</h4>
+        <vue-opti-select-light 
+          ref="select"
+          v-model="models.groupCollapseSelect"
+          :options="options.items"
+          :groups="groups"
+          button-placeholder="Select"
+          button-type="tag"
+          :search-fields="['content', 'sField']"
+          :unique-key="option => option.optionalData.val"
+          debounce
+          searchable
+          group-collapse
+          :value="values">
+          <!-- <template #BUTTON_PLACEHOLDER>
+            <div class="search-input">
+              <input type="text" placeholder="Search..." @click.stop="$_onClickInput">
+              <b-icon icon="search" />
+            </div>
+          </template> -->
+          <!-- <template #BUTTON_PLACEHOLDER="{ options }">
+            ☆ <b>Select Options Options Options {{options.length}}</b>
+          </template> -->
+          <!-- <template #ITEM="{ option }">
+            <a target="_blank" href="https://google.com">{{option.content}}</a>
+          </template> -->
+          <!-- <template #GROUP_AFTER="{ group }">
+            • {{ group.content }}
+          </template> -->
+          <!-- <template #GROUP_tr="{ group }">
+            ⎔ {{ group.content }}
+          </template> -->
+          <!-- <template #ITEM_h="{ option }">
+            {{ option.content }}
+          </template>
+          <template #ITEM_AFTER_h>
+            <b-dd-divider />
+          </template> -->
+          <template #HEADER>
+            <b-dd-header>#HEADER</b-dd-header>
+          </template>
+          <template #FOOTER>
+            <b-dd-header>#FOOTER</b-dd-header>
+          </template>
+        </vue-opti-select-light>
+        <pre v-if="models.groupCollapseSelect">{{models.groupCollapseSelect}}</pre>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -231,6 +282,7 @@ export default {
         typesSelect: [],
         typesMultiSelect: [],
         tagMultiSelect: [],
+        groupCollapseSelect: [],
         tagMultiSelectServerSide: [
           {
             "id": "10-200",

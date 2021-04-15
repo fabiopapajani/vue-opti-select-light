@@ -39,6 +39,7 @@ Tested with 1,000,000 items with lazyRender.
 | debounceValue | Number default 250ms |
 | groups | [Array of object] |
 | groupBoundary | Boolean default => TRUE, Radio button case |
+| groupCollapse | Boolean default => FALSE, Default collapsed state |
 | buttonType | String default "placeholder", options => "filter", "static", "tag" |
 | tagLimit | Number default => 50 ( Used when buttonType is "tag" )|
 | buttonNoCaret | Boolean default => FALSE |
@@ -64,9 +65,11 @@ Tested with 1,000,000 items with lazyRender.
 | HEADER | |
 | HEADER_2 | Slot after search |
 | FOOTER | |
+| GROUP_BEFORE | slot-scope="{ group }" |
+| GROUP_BEFORE_[name] | slot-scope="{ group }" |
 | GROUP | slot-scope="{ group }" |
 | GROUP_[name] | slot-scope="{ group }" |
-| GROUP_BEFORE_[name] | slot-scope="{ group }" |
+| GROUP_AFTER | slot-scope="{ group }" |
 | GROUP_AFTER_[name] | slot-scope="{ group }" |
 | ITEM | slot-scope="{ option }" |
 | ITEM_[name] | slot-scope="{ option }" |
