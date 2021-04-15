@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-2">
-    <div v-if="true" class="row">
+    <div v-if="false" class="row">
       
       <div class="col-md-3">
         <h4>Types single select</h4>
@@ -149,7 +149,7 @@
       </div>
     </div>
     
-    <div v-if="true" class="row">
+    <div v-if="false" class="row">
       <div class="col-md-6">
         <h4>Types multi select tag BigData</h4>
         <vue-opti-select-light 
@@ -178,7 +178,7 @@
       </div>
     </div>
 
-    <div v-if="true" class="row">
+    <div v-if="false" class="row">
       <div class="col-md-3">
         <h4>Types multi select tag Server Side</h4>
         <vue-opti-select-light 
@@ -236,8 +236,12 @@
           <!-- <template #ITEM="{ option }">
             <a target="_blank" href="https://google.com">{{option.content}}</a>
           </template> -->
-          <!-- <template #GROUP_AFTER="{ group }">
+          <!-- <template #GROUP="{ group, selectAllFiltered, unselectAllFiltered }">
             • {{ group.content }}
+            <template v-if="false">
+              <b-btn @click="selectAllFiltered()">Select all visible</b-btn>
+              <b-btn @click="unselectAllFiltered()">Unselect all visible</b-btn>
+            </template>
           </template> -->
           <!-- <template #GROUP_tr="{ group }">
             ⎔ {{ group.content }}
@@ -441,9 +445,9 @@ export default {
   created () {
     // console.log(generateData(10));
     this.$options.bigDataOptions = generateData(100000);
-    setTimeout(() => {
-      this.$refs.selectTypes.add(14)
-    }, 3000)
+    // setTimeout(() => {
+    //   this.$refs.selectTypes.add(14)
+    // }, 3000)
   },
   methods: {
     $_onChange(values) {

@@ -67,8 +67,8 @@ Tested with 1,000,000 items with lazyRender.
 | FOOTER | |
 | GROUP_BEFORE | slot-scope="{ group }" |
 | GROUP_BEFORE_[name] | slot-scope="{ group }" |
-| GROUP | slot-scope="{ group }" |
-| GROUP_[name] | slot-scope="{ group }" |
+| GROUP | slot-scope="{ group, selectAllFiltered, unselectAllFiltered }" |
+| GROUP_[name] | slot-scope="{ group, selectAllFiltered, unselectAllFiltered }" |
 | GROUP_AFTER | slot-scope="{ group }" |
 | GROUP_AFTER_[name] | slot-scope="{ group }" |
 | ITEM | slot-scope="{ option }" |

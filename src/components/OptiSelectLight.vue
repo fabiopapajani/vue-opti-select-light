@@ -57,8 +57,8 @@
                   <i :class="`fa fa-angle-${$c_searchModel || groupsVisibleState[groupedOptions.group.value] ? 'up' : 'down'}`"></i>
                 </span>
               </template>
-              <slot v-if="$_slot(`GROUP_${groupedOptions.group.value}`)" :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group"></slot>
-              <slot v-else-if="$_slot('GROUP')" name="GROUP" :group="groupedOptions.group"></slot>
+              <slot v-if="$_slot(`GROUP_${groupedOptions.group.value}`)" :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group" :selectAllFiltered="() => $_addOptionsInternal(groupedOptions.options)" :unselectAllFiltered="() => $_removeOptionsInternal(groupedOptions.options)"></slot>
+              <slot v-else-if="$_slot('GROUP')" name="GROUP" :group="groupedOptions.group" :selectAllFiltered="() => $_addOptionsInternal(groupedOptions.options)" :unselectAllFiltered="() => $_removeOptionsInternal(groupedOptions.options)"></slot>
               <template v-else>{{ groupedOptions.group.content || '' }}</template>
             </template>
             
@@ -536,6 +536,20 @@ export default {
         this.$set(this.selected, option.inputName, option.private.key)
         this.$set(this.selectedMap, option.inputName, originalOption)
         if (trigger) this.$emit('click', originalOption, true)
+      }
+    },
+    // Internal usage
+    $_addOptionsInternal(internalOptions) {
+      if (typeof internalOptions !== 'undefined') {
+        const keys = internalOptions.map(internalOption =>  internalOption.private.key)
+        this.add(keys);
+      }
+    },
+    // Internal usage
+    $_removeOptionsInternal(internalOptions) {
+      if (typeof internalOptions !== 'undefined') {
+        const keys = internalOptions.map(internalOption =>  internalOption.private.key)
+        this.remove(keys);
       }
     },
     $_clickInput () {
