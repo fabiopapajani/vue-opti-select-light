@@ -121,7 +121,8 @@ export default {
     debounceValue: { type: Number, default: 250 },
     groups: { type: Array, default: () => [] }, // Groups options
     groupBoundary: { type: Boolean, default: true }, // Boundary when radio buttons
-    groupCollapse: { type: Boolean, default: false }, // Default: expanded groups
+    groupCollapse: { type: Boolean, default: false }, // Activate collapse group
+    collapsed: { type: Boolean, default: false }, // Default: expanded groups
     buttonType: { type: String, default: 'placeholder' },
     tagLimit: { type: Number, default: 50 },
     buttonNoCaret: { type: Boolean, default: false },
@@ -177,9 +178,9 @@ export default {
     /****************************************/
 
     /***** Create Collapse Groups Model *****/
-    if (this.groups.length) {
+    if (this.groupCollapse && this.groups.length) {
       this.groups.forEach((group) => {
-        this.$set(this.groupsVisibleState, group.value, !this.groupCollapse);
+        this.$set(this.groupsVisibleState, group.value, !this.collapsed);
       });
     }
     /****************************************/

@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-2">
-    <div v-if="false" class="row">
+    <div v-if="true" class="row">
       
       <div class="col-md-3">
         <h4>Types single select</h4>
@@ -149,7 +149,7 @@
       </div>
     </div>
     
-    <div v-if="false" class="row">
+    <div v-if="true" class="row">
       <div class="col-md-6">
         <h4>Types multi select tag BigData</h4>
         <vue-opti-select-light 
@@ -178,7 +178,7 @@
       </div>
     </div>
 
-    <div v-if="false" class="row">
+    <div v-if="true" class="row">
       <div class="col-md-3">
         <h4>Types multi select tag Server Side</h4>
         <vue-opti-select-light 
@@ -223,6 +223,7 @@
           debounce
           searchable
           group-collapse
+          collapsed
           :value="values">
           <!-- <template #BUTTON_PLACEHOLDER>
             <div class="search-input">
@@ -445,9 +446,9 @@ export default {
   created () {
     // console.log(generateData(10));
     this.$options.bigDataOptions = generateData(100000);
-    // setTimeout(() => {
-    //   this.$refs.selectTypes.add(14)
-    // }, 3000)
+    setTimeout(() => {
+      this.$refs.selectTypes.add(14)
+    }, 3000)
   },
   methods: {
     $_onChange(values) {
