@@ -639,7 +639,8 @@ export default {
             } catch (err) { /** DO NOTHING */ }
           })
         } else {
-          values = searchFields(option)
+          const vals = searchFields(option);
+          values = Array.isArray(vals) ? vals : [vals];    
         }
         // Make group searchable
         if (group && group.content) values.push(group.content)
