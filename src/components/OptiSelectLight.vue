@@ -1,10 +1,10 @@
 <template>
   <div :class="[{ 'empty': $c_model.length === 0, 'allSelected': $c_allSelected, 'disabled': disabled }, 'vue-opti-select-light']">
-    <b-dd :lazy="lazy" :disabled="disabled" ref="dd-light" :block="buttonBlock"  :size="buttonSize" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden" :class="`btn-type-${buttonType}`">
+    <b-dd :lazy="lazy" :disabled="disabled" ref="dd-light" :block="buttonBlock" :size="buttonSize" :right="rightDropdownPosition" :no-caret="$c_buttonNoCaret" @shown="$_shown" @hidden="$_hidden" :class="`btn-type-${buttonType}`">
       <template #button-content>
         <slot v-if="$_slot('BUTTON_PLACEHOLDER')" name="BUTTON_PLACEHOLDER" :options="$c_model" :option="single ? $c_model[0] || null : null" :allSelected="$c_allSelected"></slot>
         <span v-else-if="buttonType === 'filter'" class="button-placehoder-filter">
-          <i class="fa fa-filter"></i><b-badge v-show="$c_model.length" pill variant="info">{{$c_model.length}}</b-badge>
+          <i class="fa fa-filter"></i><b-badge v-show="$c_model.length" pill variant="info">{{ $c_model.length }}</b-badge>
         </span>
         <span v-else-if="buttonType === 'tag' && $c_modelTag.length" class="button-placehoder-tag">
           <template v-for="(option) in $c_modelTag">
@@ -15,13 +15,13 @@
               </span>
               <span v-else class="tag-name p-2" v-html="$_optionLabel(option)"></span>
               <span class="tag-remove p-1" @click.stop="$_removeTag($_optionKey(option))" title="Remove">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/><path d="M9 1L1 9" stroke="#546582" stroke-width="2" stroke-linecap="round"/></svg>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 9" stroke="#546582" stroke-width="2" stroke-linecap="round" /><path d="M9 1L1 9" stroke="#546582" stroke-width="2" stroke-linecap="round" /></svg>
               </span>
             </span>
           </template>
           <template v-if="$c_model.length > tagLimit">
             <span class="tag-toggle show-all" v-if="$c_model.length > $c_modelTag.length" @click.stop="showAllTags = true">Show all ({{ $c_model.length - tagLimit }} more)</span>
-            <span class="tag-toggle show-less" v-else  @click.stop="showAllTags = false">Show less</span>
+            <span class="tag-toggle show-less" v-else @click.stop="showAllTags = false">Show less</span>
           </template>
         </span>
         <span v-else-if="buttonType === 'static' || !$c_model.length" class="button-placehoder-static" v-html="buttonPlaceholder"></span>
@@ -33,8 +33,11 @@
             <span v-else v-html="$c_oneOptionSelectedLocal.private.label"></span>
           </template>
           <template v-else>
-            {{buttonPlaceholderMultiple({ count: $c_model.length, suffix: $c_model.length > 1 ? 's' : '' })}}
+            {{ buttonPlaceholderMultiple({ count: $c_model.length, suffix: $c_model.length > 1 ? 's' : '' }) }}
           </template>
+        </span>
+        <span v-if="allowClear && $c_model.length" @click.stop="$_clearSelect" class="clear-btn-wrapper">
+          <i class="fa fa-times"></i>
         </span>
       </template>
       <slot v-if="$_slot('HEADER')" name="HEADER"></slot>
@@ -59,9 +62,9 @@
               </template>
               <slot v-if="$_slot(`GROUP_${groupedOptions.group.value}`)" :name="`GROUP_${groupedOptions.group.value}`" :group="groupedOptions.group" :selectAllFiltered="() => $_addOptionsInternal(groupedOptions.options)" :unselectAllFiltered="() => $_removeOptionsInternal(groupedOptions.options)"></slot>
               <slot v-else-if="$_slot('GROUP')" name="GROUP" :group="groupedOptions.group" :selectAllFiltered="() => $_addOptionsInternal(groupedOptions.options)" :unselectAllFiltered="() => $_removeOptionsInternal(groupedOptions.options)"></slot>
-              <template v-else>{{ groupedOptions.group.content || '' }}</template>
+              <span v-else class="condition-group-item-name">{{ groupedOptions.group.content || '' }}</span>
             </template>
-            
+
             <template v-if="$c_searchModel || (typeof groupsVisibleState[groupedOptions.group.value] === 'undefined') || groupsVisibleState[groupedOptions.group.value]">
               <template v-for="(option, j) in groupedOptions.options">
                 <slot v-if="$_slot(`ITEM_BEFORE_${option.private.key}`)" :name="`ITEM_BEFORE_${option.private.key}`" :option="$_originalOption(option.private.key)"></slot>
@@ -128,6 +131,8 @@ export default {
     buttonNoCaret: { type: Boolean, default: false },
     buttonBlock: { type: Boolean, default: false },
     buttonSize: { type: String, default: 'sm' },
+    rightDropdownPosition: { type: Boolean, default: false },
+    allowClear: { type: Boolean, default: false },
     optionType: { type: String, default: 'text' },
     buttonPlaceholder: { type: String, default: 'Select Option' },
     buttonPlaceholderAllSelected: { type: String, default: '' },
@@ -445,6 +450,11 @@ export default {
       this.$_clear()
       this.$_emit()
     },
+    $_clearSelect () {
+      this.clear()
+      this.$emit('clear')
+      this.hide()
+    },
     show () {
       this.$refs['dd-light'].show()
     },
@@ -759,6 +769,8 @@ export default {
       }
     }
     .dropdown-toggle {
+      position: relative;
+
       .button-placehoder-filter {
         width: 13px;
         display: inline-block;
@@ -773,6 +785,40 @@ export default {
       &.btn-block {
         &+ .dropdown-menu {
           width: 100%;
+        }
+      }
+
+      &:hover {
+        .clear-btn-wrapper {
+          opacity: 1;
+        }
+      }
+
+      .clear-btn-wrapper {
+        position: absolute;
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        right: 1.1rem;
+        top: .7rem;
+        border-radius: 50%;
+        background-color: #e9e9e9;
+        width: 1.7rem;
+        height: 1.7rem;
+        z-index: 1;
+        transition: all .15s ease-in-out;
+
+        &:hover {
+          background-color: #dddddd;
+        }
+
+        i {
+          color: #949494;
+          font-size: 1.1rem;
+          display: inline-block;
+          margin-left: -.1rem;
         }
       }
     }
@@ -794,10 +840,24 @@ export default {
       .options-list {
         max-height: 400px;
         overflow-y: auto;
+
         header.dropdown-header {
+          position: relative;
+
           .group-collapse {
-            padding-right: 0.5rem;
+            position: absolute;
+            width: 100%;
+            left: 0;
             cursor: pointer;
+
+            i {
+              font-size: 1.9rem;
+              color: #4E5964;
+            }
+          }
+
+          .group-collapse + .condition-group-item-name {
+            margin-left: 1.3rem;
           }
         }
         .dropdown-item {
