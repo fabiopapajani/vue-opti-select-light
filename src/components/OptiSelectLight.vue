@@ -636,6 +636,13 @@ export default {
       if (this.touched) this.$emit('change', data)
       if (this.searchModel) this.searchModel = ''
       this.$emit('hidden')
+      if(this.groupsVisibleState){
+      for (let key in this.groupsVisibleState) {
+          if (Object.prototype.hasOwnProperty.call(this.groupsVisibleState, key)) {
+              this.groupsVisibleState[key] = false;
+          }
+      }
+      }
     },
     $_getSearchPattern (option, group) {
       if (this.searchable) {
