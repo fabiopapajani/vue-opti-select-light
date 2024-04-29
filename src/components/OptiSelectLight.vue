@@ -160,6 +160,7 @@ export default {
       visibleOptions: [], // Visible Options (lazy-render)
       serverSideOptions: [], // Server-Side options
       serverSidePage: 0, // Server-Side page
+      noMoreServerSideResults: false,
       serverSideLoading: false,
       resetScroll: false,
       groupsVisibleState: {},
@@ -727,7 +728,7 @@ export default {
       const scrollableDiv = this.$refs['dd-light'].$el.querySelector('.options-list');
       if (scrollableDiv) {
         const { scrollTop } = scrollableDiv;
-        if (!this.serverSideOptions.length || reset || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) {
+        if ((!this.serverSideOptions.length || reset || (scrollableDiv.scrollHeight - 30 <= scrollableDiv.clientHeight + scrollTop)) && !this.serverSideLoading) {
           this.$_pullServerSideOptions(reset);
           if (reset) scrollableDiv.scrollTo(0, 0);
           // scrollableDiv.scrollTo(0, scrollTop);
@@ -735,20 +736,26 @@ export default {
       }
     },
     $_pullServerSideOptions (reset = false) {
-      this.serverSideLoading = true;
       if (reset) {
+        this.serverSideLoading = true;
         this.$options.promiseQueue.createCancellablePromise(() => {
           return this.options(1, this.$c_searchModel);
         }, (result) => {
           this.serverSidePage = 1;
           this.serverSideOptions = result;
+          this.noMoreServerSideResults = false;
         })
-      } else {
+      } else if(!this.noMoreServerSideResults) {
+        this.serverSideLoading = true;
         this.$options.promiseQueue.createCancellablePromise(() => {
           return this.options(this.serverSidePage + 1, this.$c_searchModel);
         }, (result) => {
-          this.serverSidePage++;
-          this.serverSideOptions.push(...result);
+          if (result.length > 0) {
+            this.serverSidePage++;
+            this.serverSideOptions.push(...result);
+          } else {
+            this.noMoreServerSideResults = true;
+          }
         })
       }
     },
